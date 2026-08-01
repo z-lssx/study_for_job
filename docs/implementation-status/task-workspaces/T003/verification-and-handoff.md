@@ -1,7 +1,7 @@
 # T003 验证与交接
 
 验证日期：2026-08-02  
-结论：本地 fake、迁移、双数据库隔离、管理 API、调用账本和桌面管理页达到 T003 验收边界；真实 DeepSeek 因未提供凭据未验证。
+结论：本地 fake、迁移、双数据库隔离、管理 API、调用账本和桌面管理页达到 T003 验收边界；SophNet key 兜底已完成后续接入，真实 DeepSeek 因模型标识未配置而未验证。
 
 ## 完成内容
 
@@ -23,7 +23,7 @@ python -m unittest discover -s tests -v
 python -m py_compile app\main.py app\config.py app\migrations.py app\models.py app\api\admin_ai.py app\ai\contracts.py app\ai\errors.py app\ai\factory.py app\ai\gateway.py app\ai\prompting.py app\ai\providers.py app\ai\repository.py
 ```
 
-结果：7/7 通过，语法检查通过。覆盖 fake 成功/失败、失败日志不含 prompt、非法模板、未知 provider 异常安全映射、OpenAI-compatible token 解析、超时和缺配置。
+结果：9/9 通过，语法检查通过。覆盖 fake 成功/失败、失败日志不含 prompt、非法模板、未知 provider 异常安全映射、OpenAI-compatible token 解析、超时、缺配置、SophNet key 兜底和显式 key 优先级。
 
 ### Compose 与运行时
 
@@ -42,7 +42,7 @@ docker compose logs --no-color --tail 80 frontend api
 
 - `POST /api/admin/ai/diagnostics` 成功路径返回 fake、`local-deterministic-v1`、48 input + 8 output = 56 token、64 位 prompt hash 和 UUID trace。
 - 失败模拟返回 HTTP 502、`fake_provider_failure` 和独立 trace；没有返回 prompt、请求正文或内部异常。
-- 最终开发库聚合：6 次调用，3 成功、3 失败，144 input、24 output、168 total token，平均 11.2 ms。
+- 最终开发库聚合：6 次 fake 调用，3 成功、3 次主动失败模拟，144 input、24 output、168 total 模拟 token，平均 11.2 ms；失败是验收动作，不代表真实远程调用异常。
 - 最近调用查询同时显示成功与失败状态、耗时、hash、trace 和安全错误码。
 - 包含 `{api_key}` 的模板更新返回 HTTP 422 `模板包含未开放变量：api_key`，未修改持久化模板。
 
@@ -80,7 +80,7 @@ docker compose logs --no-color --tail 80 frontend api
 
 ## 敏感信息验证
 
-- 仓库扫描真实 key/Bearer/非空 `DEEPSEEK_API_KEY` 形式：0 命中。
+- 仓库扫描真实 key/Bearer/非空 `DEEPSEEK_API_KEY`、`SOPHNET_API_KEY` 形式：0 命中。
 - `ai_call_logs.request_parameters` 中 `api_key`、`authorization`、`base_url` 键：0 条。
 - runtime、prompt、call API 不返回 API key；runtime 也不返回 base URL。
 - `.env.example` 只有空占位，真实凭据未写入仓库、数据库、日志或前端。
@@ -97,7 +97,7 @@ docker compose logs --no-color --tail 80 frontend api
 
 ## DeepSeek 真实调用状态
 
-因无凭据未验证。没有硬编码未经确认的 DeepSeek V4 模型名；需要由 `DEEPSEEK_BASE_URL`、`DEEPSEEK_MODEL`、`DEEPSEEK_API_KEY` 提供真实值后，选择性执行一次固定诊断，确认远程 token 字段和错误体。
+因模型标识尚未配置而未验证。默认 base URL 已设为 SophNet，API 容器确认能够读取 `SOPHNET_API_KEY`，但没有输出或持久化密钥值。待 `DEEPSEEK_MODEL` 确认后，选择性执行一次固定诊断，确认远程 token 字段和错误体；`DEEPSEEK_API_KEY` 可作为显式覆盖。
 
 ## 遗留问题与风险
 

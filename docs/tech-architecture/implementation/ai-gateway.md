@@ -1,6 +1,6 @@
 # AI Gateway 与调用账本
 
-状态：已实现并完成本地确定性验证；真实 DeepSeek 远程调用因未提供凭据而未验证。
+状态：已实现并完成本地确定性验证；SophNet key 已接入环境兜底，真实 DeepSeek 远程调用因模型标识尚未配置而未验证。
 
 ## 解决的问题
 
@@ -18,7 +18,7 @@
   -> 管理 API 返回脱敏元数据与聚合统计
 ```
 
-`AiProvider` 协议隔离供应商，当前实现包括确定性 `FakeProvider` 与 `DeepSeekCompatibleProvider`。后者只依赖 OpenAI-compatible `/chat/completions` 契约，base URL、model 和 API key 均来自服务端环境；业务调用方在两者之间切换无需修改。
+`AiProvider` 协议隔离供应商，当前实现包括确定性 `FakeProvider` 与 `DeepSeekCompatibleProvider`。后者只依赖 OpenAI-compatible `/chat/completions` 契约，默认 base URL 为 SophNet `https://www.sophnet.com/api/open-apis/v1`，model 由环境配置；API key 优先读取 `DEEPSEEK_API_KEY`，为空时兜底读取 `SOPHNET_API_KEY`。业务调用方在两者之间切换无需修改。
 
 ## 数据与查询
 
@@ -33,7 +33,7 @@
 - 失败调用与成功调用使用同一 trace 和日志链路；token 不可用时保持 `NULL`，不伪造为真实计量。
 - prompt 页面只能编辑模板、启停和两个参数。变量白名单由代码再次校验，输入输出 Schema、安全规则、工具权限、工作流和 provider 配置均不开放给页面。
 - 受限诊断固定使用 `gateway_diagnostic` 和代码内置变量，只开放 fake 失败模拟布尔值，不接收自由文本。
-- `SecretStr` 承载密钥；运行时 API 不返回 base URL 或 key，日志参数也不包含它们。
+- `SecretStr` 承载 `DEEPSEEK_API_KEY` 与 `SOPHNET_API_KEY`；运行时 API 不返回 base URL 或 key，日志参数也不包含它们。
 
 ## 增量迁移取舍
 
@@ -41,13 +41,13 @@ PostgreSQL init 目录只在数据卷首次创建时运行，不能覆盖已有 
 
 ## 已执行验证
 
-- 7 个 Gateway/provider 单元测试通过：fake 成功/失败、无正文泄露、非法模板、未知异常、OpenAI-compatible 结构化响应、超时和缺配置。
-- 开发库保留 T001 的 1 条目标画像和 6 条投递记录，新增 3 个场景、3 个模板；最终 6 条诊断日志为 3 成功/3 失败、168 token。
+- 9 个 Gateway/provider/config 单元测试通过：fake 成功/失败、无正文泄露、非法模板、未知异常、OpenAI-compatible 结构化响应、超时、缺配置、SophNet key 兜底和显式 key 优先级。
+- 开发库保留 T001 的 1 条目标画像和 6 条投递记录，新增 3 个场景、3 个模板；最终 6 条 fake 诊断日志为 3 成功/3 次主动失败模拟、168 个模拟 token，不代表远程服务故障或真实计费。
 - 使用库为 0 条目标画像、0 条投递、0 条 AI 日志，仅包含同一迁移产生的 3 个场景和 3 个模板。
 - 管理 API 对 `{api_key}` 未开放变量返回 422；仓库敏感值扫描无命中，日志参数中的 `api_key`、`authorization`、`base_url` 键计数为 0。
 - 桌面页人工确认 provider、三个场景、编辑器、模块/场景筛选、聚合指标、错误数和最近 trace 正常展示；配置经页面成功写回 PostgreSQL。
 
 ## 当前限制
 
-- DeepSeek V4 的实际 base URL、模型标识、token 口径和远程错误体尚未用真实凭据验证。
+- SophNet base URL 与 key 注入已在 API 容器内验证，但 DeepSeek V4 模型标识、token 口径和远程错误体尚未通过真实请求验证。
 - 当前只实现同步单次调用和少量关键场景，不包含重试、费用结算、发布回滚、聊天、批处理、Worker、RAG 或 Agent。

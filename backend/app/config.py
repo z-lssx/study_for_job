@@ -23,16 +23,22 @@ class Settings(BaseSettings):
     ai_provider: str = "fake"
     ai_request_timeout_seconds: float = Field(default=30, ge=1, le=120)
     ai_fake_model: str = "local-deterministic-v1"
-    deepseek_base_url: str = ""
+    deepseek_base_url: str = "https://www.sophnet.com/api/open-apis/v1"
     deepseek_model: str = ""
     deepseek_api_key: SecretStr = SecretStr("")
+    sophnet_api_key: SecretStr = SecretStr("")
+
+    @property
+    def resolved_deepseek_api_key(self) -> str:
+        explicit = self.deepseek_api_key.get_secret_value().strip()
+        return explicit or self.sophnet_api_key.get_secret_value().strip()
 
     @property
     def deepseek_configured(self) -> bool:
         return bool(
             self.deepseek_base_url.strip()
             and self.deepseek_model.strip()
-            and self.deepseek_api_key.get_secret_value().strip()
+            and self.resolved_deepseek_api_key
         )
 
     @property

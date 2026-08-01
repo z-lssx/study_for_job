@@ -10,7 +10,7 @@
 ## 最终选择
 
 - 业务模块只依赖自有 `AiGateway` 和 `AiProvider` 协议。
-- DeepSeek 作为 OpenAI-compatible provider 适配，base URL、model 和 API key 均由服务端环境提供。
+- DeepSeek 作为 OpenAI-compatible provider 适配，默认使用 SophNet base URL；model 由环境提供，key 采用 `DEEPSEEK_API_KEY` 显式覆盖、`SOPHNET_API_KEY` 本地兜底。
 - 默认 provider 是明确标识的确定性 fake，实现相同契约并支持受限失败模拟；它只用于本地链路验证，不冒充真实模型结果。
 - Gateway 统一负责 prompt 校验/渲染/hash、trace、token 结构和成功/失败日志，供应商适配器只负责远程协议与错误映射。
 
@@ -32,4 +32,4 @@
 
 ## 后续演进条件
 
-只有在真实业务需要流式响应、多模态、工具调用或多个非兼容供应商时扩展协议；真实 DeepSeek 凭据可用后补一次固定诊断，不改变当前业务边界。
+只有在真实业务需要流式响应、多模态、工具调用或多个非兼容供应商时扩展协议；确认 DeepSeek V4 模型标识后补一次固定诊断，不改变当前业务边界。

@@ -24,7 +24,7 @@
 - T003 已建立自有 AI Gateway/Provider 边界，接入确定性 fake 与环境配置的 DeepSeek OpenAI-compatible provider；切换 provider 不需要修改业务调用方。
 - T003 已新增关键 prompt 场景/模板与调用账本迁移，并通过启动迁移器覆盖已有数据卷；开发库保留 T001 数据，使用库没有样例业务事实或调用日志。
 - T003 桌面 AI 管理页已支持三个代码批准场景的模板/参数编辑、固定成功/失败诊断、按模块/场景 token 聚合和最近 trace；没有扩展为聊天或供应商平台。
-- T003 本地 fake 最终验证为 3 次成功、3 次失败、168 token；真实 DeepSeek 因未提供凭据未验证，base URL 和模型标识继续由环境显式提供。
+- T003 本地 fake 最终验证为 3 次成功、3 次主动失败诊断、168 个模拟 token；这些失败用于验证错误日志而非线上异常。SophNet base URL 与 `SOPHNET_API_KEY` 兜底已接入并在容器内确认可用，真实 DeepSeek 因模型标识尚未配置而未调用。
 
 ## 已确认但尚未实现
 

@@ -15,7 +15,8 @@
 - 已实现 `AiGateway`、自有 provider/store 契约、fake provider、DeepSeek OpenAI-compatible provider、prompt 校验/渲染/哈希、错误映射与成功/失败日志。
 - 已实现 `/api/admin/ai` 的运行时、prompt 查看/编辑、日志、聚合统计和固定诊断 API；响应与日志不返回凭据、base URL、prompt/响应正文。
 - 已实现桌面 AI 管理视图并融入现有导航：三个关键场景编辑、成功/失败诊断、模块/场景筛选、30 天 token 指标与最近 trace。
-- 已补充 7 个 Gateway/provider 单元测试。开发库、使用库、真实 API、容器日志和桌面视图均按风险完成验证；真实 DeepSeek 因未提供凭据未调用。
+- 已补充 9 个 Gateway/provider/config 单元测试。开发库、使用库、真实 API、容器日志和桌面视图均按风险完成验证；SophNet key 已接入容器，真实 DeepSeek 因模型标识未配置而未调用。
+- 后续增量采用 SophNet 默认 base URL；API key 优先读取 `DEEPSEEK_API_KEY`，为空时兜底读取本地 `SOPHNET_API_KEY`，两者均使用 `SecretStr`。
 
 ## 开发中修正的问题
 

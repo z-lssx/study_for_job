@@ -16,7 +16,7 @@ def create_provider():
         return DeepSeekCompatibleProvider(
             base_url=settings.deepseek_base_url,
             model=settings.deepseek_model,
-            api_key=settings.deepseek_api_key.get_secret_value(),
+            api_key=settings.resolved_deepseek_api_key,
             timeout_seconds=settings.ai_request_timeout_seconds,
         )
     raise GatewayError("provider_not_supported", "AI_PROVIDER 只支持 fake 或 deepseek", 503)

@@ -1,6 +1,6 @@
 # T003：AI Gateway、关键 prompt 配置与 token 日志闭环
 
-状态：已完成（本地 fake 与双数据库验证通过；真实 DeepSeek 因无凭据未验证）
+状态：已完成（本地 fake 与双数据库验证通过；SophNet key 兜底已接入，真实 DeepSeek 因模型标识未配置而未验证）
 
 ## 任务提示词
 
@@ -104,5 +104,6 @@ Skills: @build-web-apps:react-best-practices @build-web-apps:supabase-postgres-b
 
 - 完成时间：2026-08-02
 - 已实现自有 Gateway/Provider、DeepSeek OpenAI-compatible 适配、确定性 fake、prompt 白名单管理、成功/失败调用日志、token/trace 聚合与桌面管理页。
+- 后续增量接入 SophNet 默认 base URL 和 `SOPHNET_API_KEY` 环境变量兜底；保留 `DEEPSEEK_API_KEY` 显式覆盖优先级。
 - `002_ai_gateway.sql` 与启动迁移器已在开发库、使用库验证；开发库原 T001 数据不变，使用库没有样例业务事实或调用日志。
 - 详细实施、命令、人工步骤、结果与限制见 `task-workspaces/T003/implementation.md` 和 `task-workspaces/T003/verification-and-handoff.md`。

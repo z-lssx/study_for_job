@@ -42,17 +42,16 @@ API 默认从 `POSTGRES_HOST`、`POSTGRES_PORT`、`POSTGRES_USER`、`POSTGRES_PA
 
 AI Gateway 默认使用确定性的本地 fake provider，不需要外部密钥即可验证成功、失败、token 和 trace 日志。桌面端顶部进入“AI 管理”，可以编辑三个代码批准场景的 system/task 模板、`temperature`、`max_tokens` 和启停状态，并查看按模块/场景聚合的 30 天 token 账本。诊断入口只接受成功/失败开关，不是通用聊天入口。
 
-需要受控验证 DeepSeek OpenAI-compatible 接口时，在本机环境提供以下变量后重建或重建 API 容器；不要把真实值写入 `.env.example`、数据库或仓库：
+需要受控验证 DeepSeek OpenAI-compatible 接口时，在本机环境提供以下变量后重建 API 容器；不要把真实值写入 `.env.example`、数据库或仓库。当前默认 base URL 为 `https://www.sophnet.com/api/open-apis/v1`：
 
 ```powershell
 $env:AI_PROVIDER = "deepseek"
-$env:DEEPSEEK_BASE_URL = "<OpenAI-compatible base URL>"
 $env:DEEPSEEK_MODEL = "<已确认可用的模型标识>"
-$env:DEEPSEEK_API_KEY = "<local secret>"
+$env:SOPHNET_API_KEY = "<local secret>"
 docker compose up -d --build api
 ```
 
-`AI_REQUEST_TIMEOUT_SECONDS` 控制单次远程调用超时，默认 30 秒。当前不硬编码未经凭据验证的 DeepSeek V4 模型标识；运行时状态 API 只返回 provider、model 和是否配置完成，不返回 base URL 或密钥。
+`DEEPSEEK_BASE_URL` 可覆盖默认地址；`DEEPSEEK_API_KEY` 可作为显式覆盖并优先于 `SOPHNET_API_KEY`。`AI_REQUEST_TIMEOUT_SECONDS` 控制单次远程调用超时，默认 30 秒。当前不硬编码未经验证的 DeepSeek V4 模型标识；运行时状态 API 只返回 provider、model 和是否配置完成，不返回 base URL 或密钥。
 
 如果 Docker Desktop 能拉取基础镜像但容器内 `pip` 下载超时，可在当前 PowerShell 会话临时传入宿主机代理（不要提交到项目配置）：
 
