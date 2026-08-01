@@ -4,7 +4,7 @@
 
 ## 当前阶段
 
-阶段一“数据底座与投递闭环”已完成。当前没有进行中子任务；下一任总管应先建立自己的阶段二管理规划，再从 T005 开始派发面试情报闭环开发。
+阶段一“数据底座与投递闭环”已完成。当前没有进行中子任务；用户下一步应启动项目大总管，由大总管创建阶段二总管。阶段二总管应先建立自己的阶段管理规划，再从 T005 开始派发面试情报闭环开发。
 
 ## 已完成事项
 
@@ -60,15 +60,17 @@
 
 ## 下一步建议
 
-1. 用户手动启动下一任总管。
-2. 下一任总管阅读必读文档并建立阶段二管理规划，不直接沿用 M001 作为自己的规划。
-3. 细化并派发 T005，先完成“公开 URL 或手动正文 → 原文持久化 → URL/内容哈希幂等 → 状态/失败原因 → Worker 处理”的纵向链路。
-4. T005 只注册现有 Worker 处理器，不扩展 `next_run_at` 为用户定时任务。
-5. 在原文与状态链路稳定后，再拆分结构化抽取、题目归一化、证据回链和检索任务。
+1. 用户使用 `docs/project-governance/prompts/program-manager-v1.md` 手动启动第一代项目大总管。
+2. 项目大总管复核宏观路线图，并通过桌面任务工具创建阶段二总管。
+3. 阶段二总管阅读必读文档并建立自己的阶段管理规划，不直接沿用 M001。
+4. 阶段二总管细化并派发 T005，先完成“公开 URL 或手动正文 → 原文持久化 → URL/内容哈希幂等 → 状态/失败原因 → Worker 处理”的纵向链路。
+5. T005 只注册现有 Worker 处理器，不扩展 `next_run_at` 为用户定时任务。
+6. 在原文与状态链路稳定后，再拆分结构化抽取、题目归一化、证据回链和检索任务。
 
 ## 下一任总管必读
 
 - 根目录 `AGENTS.md`、`README.md`。
+- `docs/project-governance/PROGRAM_MANAGER.md`（项目大总管必读）。
 - `docs/project-governance/AGENTS.md`。
 - `docs/product-overview/README.md`。
 - `docs/decision-log/README.md`。
@@ -76,6 +78,7 @@
 - `docs/tech-architecture/decisions/0002-postgres-job-queue-leases.md`。
 - `docs/tech-architecture/implementation/job-queue-worker.md` 以及 T003 AI Gateway 实现记录。
 - `docs/implementation-status/README.md`、`current.md`、`roadmap.md`、`queue.md`。
+- `docs/implementation-status/program-status.md`。
 - `docs/implementation-status/tasks/T003-ai-gateway-prompt-token.md`。
 - `docs/implementation-status/tasks/T004-postgres-job-worker.md`。
 - `docs/implementation-status/task-workspaces/T004/verification-and-handoff.md`。

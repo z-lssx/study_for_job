@@ -14,7 +14,7 @@
 - [决策记录](docs/decision-log/README.md)
 - [技术架构](docs/tech-architecture/README.md)
 - [实施状态](docs/implementation-status/README.md)
-- [总管协作规则](docs/project-governance/AGENTS.md)
+- [项目开发治理](docs/project-governance/README.md)
 
 文档约定：产品边界以 `docs/decision-log/README.md` 中已经确认的决策为准；技术架构和代码实现可以在不突破这些边界的前提下由 AI 自主决策。
 
