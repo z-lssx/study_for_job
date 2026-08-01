@@ -16,3 +16,7 @@
 - 后续演进条件
 
 普通库用法、字段命名、CRUD 实现和可随时替换的局部细节不需要写成决策。
+
+## 已记录决策
+
+- [0001：AI Gateway 使用自有契约与本地确定性 provider](0001-ai-gateway-provider-boundary.md)

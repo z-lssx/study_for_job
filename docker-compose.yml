@@ -1,0 +1,60 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: study_for_job
+      POSTGRES_DEV_DB: study_for_job_dev
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+    ports:
+      - "5432:5432"
+    volumes:
+      - study_for_job_data:/var/lib/postgresql/data
+      - ./migrations:/docker-entrypoint-initdb.d:ro
+      - ./database/seeds:/opt/study_for_job/seeds:ro
+  api:
+    build:
+      context: ./backend
+      args:
+        HTTP_PROXY: ${DOCKER_BUILD_HTTP_PROXY:-}
+        HTTPS_PROXY: ${DOCKER_BUILD_HTTPS_PROXY:-}
+        NO_PROXY: ${DOCKER_BUILD_NO_PROXY:-}
+    environment:
+      APP_ENVIRONMENT: ${APP_ENVIRONMENT:-development}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+      POSTGRES_DB: ${APP_DATABASE_NAME:-study_for_job_dev}
+      POSTGRES_POOL_SIZE: 5
+      POSTGRES_MAX_OVERFLOW: 10
+      CORS_ORIGINS: http://localhost:5173
+      MIGRATIONS_DIR: /app/migrations
+      AI_PROVIDER: ${AI_PROVIDER:-fake}
+      AI_REQUEST_TIMEOUT_SECONDS: ${AI_REQUEST_TIMEOUT_SECONDS:-30}
+      AI_FAKE_MODEL: ${AI_FAKE_MODEL:-local-deterministic-v1}
+      DEEPSEEK_BASE_URL: ${DEEPSEEK_BASE_URL:-}
+      DEEPSEEK_MODEL: ${DEEPSEEK_MODEL:-}
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+    volumes:
+      - ./migrations:/app/migrations:ro
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    environment:
+      VITE_API_PROXY_TARGET: http://api:8000
+    volumes:
+      - ./:/app
+      - study_for_job_node_modules:/app/node_modules
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
+volumes:
+  study_for_job_data:
+  study_for_job_node_modules:

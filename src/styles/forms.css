@@ -1,0 +1,31 @@
+.modal-backdrop { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; padding: 20px; background: #1819169e; backdrop-filter: blur(5px); }
+.editor-modal { width: min(760px, 100%); max-height: 92vh; overflow-y: auto; padding: clamp(24px, 4vw, 42px); background: var(--paper-light); border: 1px solid var(--ink); box-shadow: 13px 13px 0 var(--acid); animation: modalIn .3s cubic-bezier(.2,.8,.2,1) both; }
+.editor-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 32px; padding-bottom: 20px; border-bottom: 1px solid var(--ink); }
+.editor-header p { margin: 0 0 8px; color: var(--cobalt); font: 700 9px var(--mono); letter-spacing: .12em; }
+.editor-header h2 { margin: 0; font: 500 clamp(30px, 4vw, 46px)/1 var(--display); letter-spacing: -.05em; }
+.form-error { margin-bottom: 20px; padding: 12px 14px; color: #7b2115; background: #ffd5cb; border-left: 5px solid var(--coral); font-size: 11px; }
+.editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.editor-grid > label { display: grid; gap: 8px; color: var(--ink-soft); font-size: 10px; font-weight: 800; }
+.editor-grid .wide, .stage-field { grid-column: 1 / -1; }
+.editor-grid input, .editor-grid textarea { width: 100%; padding: 12px 2px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; outline: 0; color: var(--ink); background: transparent; font-size: 13px; resize: vertical; }
+.editor-grid input:focus, .editor-grid textarea:focus { border-bottom-color: var(--cobalt); box-shadow: 0 2px 0 var(--cobalt); }
+.stage-field { margin: 2px 0; padding: 0; border: 0; }
+.stage-field legend { margin-bottom: 8px; color: var(--ink-soft); font-size: 10px; font-weight: 800; }
+.stage-field > div { display: grid; grid-template-columns: repeat(5, 1fr); border: 1px solid var(--ink); }
+.stage-field label { min-height: 58px; display: grid; place-content: center; justify-items: center; gap: 4px; border-right: 1px solid var(--ink); font-size: 10px; cursor: pointer; }
+.stage-field label:last-child { border-right: 0; }
+.stage-field label.checked { background: var(--acid); }
+.stage-field input { position: absolute; opacity: 0; pointer-events: none; }
+.stage-field span { font: 700 8px var(--mono); }
+.editor-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 34px; padding-top: 22px; border-top: 1px solid var(--line); }
+
+@keyframes modalIn { from { opacity: 0; transform: translateY(25px) rotate(.5deg); } to { opacity: 1; transform: translateY(0) rotate(0); } }
+
+@media (max-width: 620px) {
+  .modal-backdrop { padding: 10px; align-items: end; }
+  .editor-modal { max-height: 95vh; padding: 24px 18px; box-shadow: 7px 7px 0 var(--acid); }
+  .editor-grid { grid-template-columns: 1fr; }
+  .editor-grid .wide, .stage-field { grid-column: auto; }
+  .stage-field > div { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .stage-field label { min-height: 52px; font-size: 8px; }
+}

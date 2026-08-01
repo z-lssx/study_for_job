@@ -10,6 +10,7 @@ env/
 ENV/
 
 # Packaging and test artifacts
+node_modules/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/

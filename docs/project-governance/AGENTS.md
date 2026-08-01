@@ -47,6 +47,8 @@
 
 不要把全部 Skill 塞入每个任务；一个任务只绑定真正需要的 Skill。
 
+普通业务页面、信息架构、看板布局和交互设计优先使用 HTML、CSS 与现有组件实现。只有用户明确要求位图，或产品确实需要插画、纹理、图片素材时才绑定和调用 ImageGen；不为概念图默认消耗图片生成资源。
+
 ## 任务工具
 
 优先使用 Codex 桌面任务工具创建、读取和续发独立任务：`list_projects`、`create_thread`、`list_threads`、`read_thread`、`send_message_to_thread`，必要时使用 `set_thread_title` 和 `set_thread_archived`，并记录返回的 thread ID。
@@ -62,6 +64,10 @@ codex -C "D:\file\code\chatgpt_project\study_for_job" exec resume <SESSION_ID> "
 
 ## 工作循环
 
-文档状态 → 阶段规划 → 生成带 Skill 标记的任务提示词 → 创建任务 → 接收结构化摘要 → 必要时派发测试/审查任务 → 更新状态 → 推进下一任务。
+文档状态 → 阶段规划 → 生成带 Skill 标记的开发任务提示词 → 创建任务 → 接收结构化摘要和自验证结果 → 更新状态 → 推进下一开发任务。
+
+开发任务必须自行完成与风险相称的验证。总管默认相信子任务 Agent 的结构化摘要和验证结论，不为每个小增量固定追加独立测试或审查任务。只有出现以下情况之一时才单独派发审查：高风险或破坏性数据迁移、安全/权限边界、重大架构调整、跨模块大范围重构、摘要与状态文档矛盾、验证明显不足，或用户明确要求。任务派发应优先推动可交付功能，避免以重复审查拖慢开发节奏。
 
 `prompts/` 仅归档发送给具体总管的启动提示词，不是 Agent 运行时上下文。
+
+从 T002 起，任务过程文档放入 `docs/implementation-status/task-workspaces/TXXX/`。子任务 Agent 在修改代码前创建 `plan.md`，开发或审查过程中增量维护 `implementation.md`，完成后创建 `verification-and-handoff.md`。未完成任务要求的迁移/API/UI 验证和交接文档时，不得将任务标记为完成。总管优先消费交接文档与结构化摘要，不通过读取源码补全理解。

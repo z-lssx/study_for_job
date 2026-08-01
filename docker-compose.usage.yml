@@ -1,0 +1,5 @@
+services:
+  api:
+    environment:
+      APP_ENVIRONMENT: usage
+      POSTGRES_DB: study_for_job

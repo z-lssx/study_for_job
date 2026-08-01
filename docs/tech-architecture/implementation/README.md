@@ -2,6 +2,7 @@
 
 本目录按领域记录已经实现的技术机制。一个模块形成稳定链路后再创建对应文件，例如：
 
+- [AI Gateway 与调用账本](ai-gateway.md)
 - `intelligence-pipeline.md`
 - `retrieval.md`
 - `planning.md`

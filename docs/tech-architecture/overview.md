@@ -497,6 +497,33 @@ study_for_job/
 
 ## 10. 实施顺序
 
+### T001 已实现骨架：本地投递闭环
+
+- `frontend` 使用 Vite + React，业务读写全部经 `/api`，浏览器不维护持久化事实副本。
+- `backend/app/main.py` 提供 FastAPI 访问层；`/api/health` 使用 `SELECT 1` 验证 API 到 PostgreSQL 的连通性。
+- `migrations/001_initial.sql` 创建 `target_profiles` 与 `applications`，阶段由 CHECK 约束限定，同一 `(company, role)` 由唯一约束去重。
+- `backend/app/config.py` 按 `POSTGRES_HOST/PORT/USER/PASSWORD/DB` 构造带密码转义的 `postgresql+psycopg` DSN，同时兼容 `DATABASE_URL`；`backend/app/db.py` 统一管理 SQLAlchemy Engine、连接池、`pool_pre_ping`、UTC 时区和 session 提交/回滚。
+- `backend/app/models.py` 为 `target_profiles` 与 `applications` 提供与迁移一致的 ORM 表模型；API 通过统一 session 访问，避免多个连接管理实现并存。
+- `docker-compose.yml` 编排 postgres、api、frontend，迁移由 Postgres 初始化目录加载。
+- 未实现 AI Gateway、Worker 或面经情报处理，仅保留可在 `backend/app` 下扩展的 API 边界。
+
+#### 本地开发数据与使用数据隔离
+
+- 同一个 PostgreSQL 16 实例维护 `study_for_job_dev` 和 `study_for_job` 两个业务数据库，避免在正式使用前依赖手工清理测试事实，也不引入第二种存储技术。
+- `migrations/001_initial.sql` 是两个数据库共同的结构事实源；`database/seeds/development.sql` 仅由开发库初始化脚本执行，并通过唯一键与条件插入保持幂等。
+- 默认 Compose 连接开发库，`docker-compose.usage.yml` 只覆盖 API 的环境标识和数据库名。前端仍只通过 `/api` 访问当前数据库，不感知也不缓存另一套持久化事实。
+- `/api/health` 返回 `environment` 和 `database_name`，用于人工确认当前写入边界，避免在两个环境间静默写错数据库。
+
+### T003 已实现：可替换 AI Gateway 与调用账本
+
+- 业务层依赖自有 `AiGateway`、`AiProvider`、`PromptStore` 与 `CallLogStore` 契约；当前 provider 为确定性 fake 和由环境配置的 DeepSeek OpenAI-compatible 适配器。
+- prompt 读取、远程调用、日志写入分段执行，网络 I/O 不持有数据库事务；无论成功或失败都以 trace ID 关联脱敏调用事实。
+- `prompt_scenarios`、`prompt_templates` 只开放三个关键场景和少量参数；变量白名单、Schema、安全规则、工具权限和工作流继续由代码控制。
+- `ai_call_logs` 支持按模块/场景/时间统计 token、状态和耗时，保存实际 prompt 哈希但不保存 prompt/响应正文或凭据。
+- 编号 SQL 由 API 启动迁移器在 advisory lock 内增量应用并校验 checksum，覆盖已有数据卷；全新开发库和使用库仍共用同一迁移事实源。
+- 桌面 AI 管理页提供配置编辑、30 天聚合、最近 trace 和固定诊断；不提供自由文本聊天或 provider 管理。
+- 实现与验证细节见 [AI Gateway 与调用账本](implementation/ai-gateway.md)。
+
 ### 阶段一：数据底座与投递闭环
 
 - PostgreSQL、迁移和基础领域表
