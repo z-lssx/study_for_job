@@ -12,7 +12,8 @@
 
 - 产品边界与用户价值：`docs/product-overview/`。
 - 已确认产品/协作决策：`docs/decision-log/`。
-- 系统级设计和已验证机制：`docs/tech-architecture/`。
+- 系统级设计和已验证机制：`docs/tech-architecture/overview.md`、`decisions/`、`implementation/`。
+- 面试表达材料：`docs/tech-architecture/interview/`，它是引用工程事实的派生层，不作为 Agent 判断实现状态的事实源。
 - 宏观阶段与当前进度：`docs/implementation-status/program-status.md`、`roadmap.md`、`current.md`、`queue.md`。
 - 阶段计划与交接：`management-plans/`、`handoffs/`。
 - 单任务过程证据：`tasks/` 与 `task-workspaces/`，完成后不再作为跨阶段首选入口。

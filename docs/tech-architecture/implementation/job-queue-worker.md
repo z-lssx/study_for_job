@@ -36,6 +36,17 @@
 - Worker 收到 SIGTERM/SIGINT 后停止领取新任务，当前任务继续到写回；处理期间的心跳避免正常长任务被误恢复。
 - Worker 进程在单次数据库周期异常时记录错误并继续轮询；若任务已处于 running，后续由租约机制恢复。
 
+## 重试退避
+
+精确公式、参数选择与演进条件见决策 [0002：PostgreSQL 任务队列采用短事务领取、租约与至少一次执行语义](../decisions/0002-postgres-job-queue-leases.md#退避公式与默认参数)。当前实现使用：
+
+```text
+delay_seconds = min(WORKER_BACKOFF_MAX_SECONDS,
+                    WORKER_BACKOFF_BASE_SECONDS × 2 ^ max(0, attempt_number - 1))
+```
+
+默认基础间隔为 5 秒、最大间隔为 300 秒且没有 jitter；第一次可重试失败等待 5 秒。`next_run_at` 从失败写回时刻加上该延迟，只承担失败重试，不是用户定时调度字段。
+
 ## 处理器与安全边界
 
 处理器通过 `HandlerRegistry` 按固定 `job_type` 注册。未知类型、非法 payload、非对象结果和未映射异常均转为固定脱敏失败，不执行 payload 中的代码或动态导入。
