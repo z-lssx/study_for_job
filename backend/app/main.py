@@ -3,7 +3,9 @@ from typing import Optional
 from uuid import UUID
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, HttpUrl
 from sqlalchemy import select, text
 from sqlalchemy.exc import IntegrityError
@@ -11,6 +13,7 @@ from sqlalchemy.orm import Session
 
 from .config import get_settings
 from .api.admin_ai import router as admin_ai_router
+from .api.admin_jobs import router as admin_jobs_router
 from .db import engine, get_db
 from .models import Application, TargetProfile
 
@@ -23,6 +26,16 @@ app.add_middleware(
     allow_headers=["*"],
 )
 app.include_router(admin_ai_router)
+app.include_router(admin_jobs_router)
+
+
+@app.exception_handler(RequestValidationError)
+async def validation_error_without_input(_request, exc: RequestValidationError):
+    safe_errors = [
+        {key: value for key, value in error.items() if key not in {"input", "ctx"}}
+        for error in exc.errors()
+    ]
+    return JSONResponse(status_code=422, content={"detail": safe_errors})
 
 
 class ProfileIn(BaseModel):

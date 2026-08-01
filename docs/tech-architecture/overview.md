@@ -524,6 +524,14 @@ study_for_job/
 - 桌面 AI 管理页提供配置编辑、30 天聚合、最近 trace 和固定诊断；不提供自由文本聊天或 provider 管理。
 - 实现与验证细节见 [AI Gateway 与调用账本](implementation/ai-gateway.md)。
 
+### T004 已实现：PostgreSQL 任务队列与独立 Worker
+
+- `jobs` 保存任务当前事实，`job_attempts` 保存每次租约/执行事实；状态为 `queued | running | retry_wait | succeeded | failed`。
+- Worker 在短事务内使用 `FOR UPDATE SKIP LOCKED` 领取，事务外执行注册处理器，并以 lease token 条件写回；心跳续租、过期恢复和迟到结果拒绝共同提供至少一次执行语义。
+- 数据库级部分唯一索引处理幂等创建；可重试失败采用有界指数退避，永久失败、最大尝试与租约耗尽均有明确终态和原因。
+- Compose 独立运行 API 与 Worker，development/usage overlay 同时切换两者数据库；受限诊断不接受任意 URL、prompt、正文、代码或用户定时时间。
+- 实现与验证细节见 [PostgreSQL 任务队列与 Worker](implementation/job-queue-worker.md)。
+
 ### 阶段一：数据底座与投递闭环
 
 - PostgreSQL、迁移和基础领域表

@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     deepseek_model: str = ""
     deepseek_api_key: SecretStr = SecretStr("")
     sophnet_api_key: SecretStr = SecretStr("")
+    worker_id: str = ""
+    worker_poll_interval_seconds: float = Field(default=1, ge=0.1, le=60)
+    worker_lease_seconds: int = Field(default=60, ge=5, le=3600)
+    worker_backoff_base_seconds: int = Field(default=5, ge=1, le=3600)
+    worker_backoff_max_seconds: int = Field(default=300, ge=1, le=86400)
 
     @property
     def resolved_deepseek_api_key(self) -> str:

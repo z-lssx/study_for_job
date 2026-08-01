@@ -20,3 +20,4 @@
 ## 已记录决策
 
 - [0001：AI Gateway 使用自有契约与本地确定性 provider](0001-ai-gateway-provider-boundary.md)
+- [0002：PostgreSQL 任务队列采用短事务领取、租约与至少一次执行语义](0002-postgres-job-queue-leases.md)

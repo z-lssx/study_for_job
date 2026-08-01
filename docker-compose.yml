@@ -43,6 +43,33 @@ services:
       - "8000:8000"
     depends_on:
       - postgres
+  worker:
+    build:
+      context: ./backend
+      args:
+        HTTP_PROXY: ${DOCKER_BUILD_HTTP_PROXY:-}
+        HTTPS_PROXY: ${DOCKER_BUILD_HTTPS_PROXY:-}
+        NO_PROXY: ${DOCKER_BUILD_NO_PROXY:-}
+    command: ["python", "-m", "app.jobs.worker"]
+    environment:
+      APP_ENVIRONMENT: ${APP_ENVIRONMENT:-development}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: study
+      POSTGRES_PASSWORD: study
+      POSTGRES_DB: ${APP_DATABASE_NAME:-study_for_job_dev}
+      POSTGRES_POOL_SIZE: 2
+      POSTGRES_MAX_OVERFLOW: 0
+      MIGRATIONS_DIR: /app/migrations
+      WORKER_ID: ${WORKER_ID:-}
+      WORKER_POLL_INTERVAL_SECONDS: ${WORKER_POLL_INTERVAL_SECONDS:-1}
+      WORKER_LEASE_SECONDS: ${WORKER_LEASE_SECONDS:-60}
+      WORKER_BACKOFF_BASE_SECONDS: ${WORKER_BACKOFF_BASE_SECONDS:-5}
+      WORKER_BACKOFF_MAX_SECONDS: ${WORKER_BACKOFF_MAX_SECONDS:-300}
+    volumes:
+      - ./migrations:/app/migrations:ro
+    depends_on:
+      - postgres
   frontend:
     image: node:22-alpine
     working_dir: /app
