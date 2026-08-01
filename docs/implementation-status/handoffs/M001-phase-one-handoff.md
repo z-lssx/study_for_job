@@ -60,17 +60,17 @@
 
 ## 下一步建议
 
-1. 用户使用 `docs/project-governance/prompts/program-manager-v1.md` 手动启动第一代项目大总管。
-2. 项目大总管复核宏观路线图，并通过桌面任务工具创建阶段二总管。
+1. 用户使用 `docs/project-governance/prompts/program-manager.md` 启动项目唯一大总管。
+2. 项目大总管先检查并登记 `program-status.md` 的唯一控制状态，复核宏观路线图，再通过桌面任务工具创建唯一活跃的阶段二总管。
 3. 阶段二总管阅读必读文档并建立自己的阶段管理规划，不直接沿用 M001。
 4. 阶段二总管细化并派发 T005，先完成“公开 URL 或手动正文 → 原文持久化 → URL/内容哈希幂等 → 状态/失败原因 → Worker 处理”的纵向链路。
 5. T005 只注册现有 Worker 处理器，不扩展 `next_run_at` 为用户定时任务。
 6. 在原文与状态链路稳定后，再拆分结构化抽取、题目归一化、证据回链和检索任务。
 
-## 下一任总管必读
+## 后续管理角色分层必读
 
 - 根目录 `AGENTS.md`、`README.md`。
-- `docs/project-governance/PROGRAM_MANAGER.md`（项目大总管必读）。
+- `docs/project-governance/PROGRAM_MANAGER.md`、`docs/implementation-status/program-status.md`（项目大总管必读）。
 - `docs/project-governance/AGENTS.md`。
 - `docs/product-overview/README.md`。
 - `docs/decision-log/README.md`。
