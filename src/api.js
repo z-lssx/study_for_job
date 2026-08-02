@@ -13,7 +13,7 @@ function nullable(value) {
   return normalized || null
 }
 
-async function requestJson(url, options, fallback) {
+export async function requestJson(url, options, fallback) {
   const response = await fetch(url, options)
   const data = await response.json().catch(() => ({}))
   if (!response.ok) throw new Error(responseError(data, fallback))

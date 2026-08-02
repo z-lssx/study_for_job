@@ -4,7 +4,7 @@ import { ArrowDownRight, CircleAlert, Database, Plus, RefreshCw, Search, Target,
 import { ApplicationBoard, DetailSheet } from './components/ApplicationBoard'
 import { ApplicationForm, ProfileForm } from './components/Forms'
 import { AiAdminPage } from './components/AiAdminPage'
-import { IntelligencePage } from './components/IntelligencePage'
+import { IntelligenceWorkspace } from './components/IntelligenceWorkspace'
 import { useJobData } from './hooks/useJobData'
 import './styles.css'
 
@@ -145,7 +145,7 @@ function App() {
           onCreate={openCreate}
         />
       </section>
-      </> : activeView === 'intelligence' ? <IntelligencePage /> : <AiAdminPage />}
+      </> : activeView === 'intelligence' ? <IntelligenceWorkspace /> : <AiAdminPage />}
     </main>
 
     <footer className="page-footer"><span>STUDY_FOR_JOB / LOCAL FIRST</span><span>MOVE WITH INTENT — 2026</span></footer>
