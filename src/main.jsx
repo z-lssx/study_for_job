@@ -5,6 +5,7 @@ import { ApplicationBoard, DetailSheet } from './components/ApplicationBoard'
 import { ApplicationForm, ProfileForm } from './components/Forms'
 import { AiAdminPage } from './components/AiAdminPage'
 import { IntelligenceWorkspace } from './components/IntelligenceWorkspace'
+import { KnowledgeWorkspace } from './components/KnowledgeWorkspace'
 import { useJobData } from './hooks/useJobData'
 import './styles.css'
 
@@ -76,6 +77,7 @@ function App() {
       <nav aria-label="主导航">
         <button className={activeView === 'applications' ? 'active' : ''} onClick={() => setActiveView('applications')}>申请轨道</button>
         <button className={activeView === 'intelligence' ? 'active' : ''} onClick={() => setActiveView('intelligence')}>面试情报</button>
+        <button className={activeView === 'knowledge' ? 'active' : ''} onClick={() => setActiveView('knowledge')}>知识复习</button>
         <button onClick={() => setShowProfileForm(true)}>目标画像</button>
         <button className={activeView === 'ai' ? 'active' : ''} onClick={() => setActiveView('ai')}>AI 管理</button>
       </nav>
@@ -145,7 +147,7 @@ function App() {
           onCreate={openCreate}
         />
       </section>
-      </> : activeView === 'intelligence' ? <IntelligenceWorkspace /> : <AiAdminPage />}
+      </> : activeView === 'intelligence' ? <IntelligenceWorkspace /> : activeView === 'knowledge' ? <KnowledgeWorkspace /> : <AiAdminPage />}
     </main>
 
     <footer className="page-footer"><span>STUDY_FOR_JOB / LOCAL FIRST</span><span>MOVE WITH INTENT — 2026</span></footer>

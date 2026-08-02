@@ -10,6 +10,7 @@
 - `planning.md`
 - `experience-coach.md`
 - `interview-simulation.md`
+- [知识准备轨道](knowledge-track.md)
 
 每份模块文档优先说明：
 
