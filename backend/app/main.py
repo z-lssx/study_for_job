@@ -16,6 +16,7 @@ from .api.admin_ai import router as admin_ai_router
 from .api.admin_jobs import router as admin_jobs_router
 from .api.canonical_questions import router as canonical_questions_router
 from .api.intelligence import router as intelligence_router
+from .api.intelligence_search import router as intelligence_search_router
 from .db import engine, get_db
 from .models import Application, TargetProfile
 
@@ -30,6 +31,7 @@ app.add_middleware(
 app.include_router(admin_ai_router)
 app.include_router(admin_jobs_router)
 app.include_router(intelligence_router)
+app.include_router(intelligence_search_router)
 app.include_router(canonical_questions_router)
 
 

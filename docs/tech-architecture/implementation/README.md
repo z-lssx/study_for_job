@@ -6,7 +6,7 @@
 - [PostgreSQL 任务队列与 Worker](job-queue-worker.md)
 - [面经原始事实与可恢复入库链路](intelligence-pipeline.md)
 - [面试情报规范题、出现事实与频率统计](intelligence-normalization.md)
-- `retrieval.md`
+- [面试情报混合检索与质量状态](retrieval.md)
 - `planning.md`
 - `experience-coach.md`
 - `interview-simulation.md`
