@@ -151,3 +151,27 @@ export function retryIntelligenceSubmissionRequest(submissionId) {
     '重新触发失败',
   )
 }
+
+export function loadIntelligenceExtractionRequest(submissionId) {
+  return requestJson(`/api/intelligence/submissions/${submissionId}/extractions`, undefined, '读取原文标注失败')
+}
+
+export function triggerIntelligenceExtractionRequest(submissionId) {
+  return requestJson(
+    `/api/intelligence/submissions/${submissionId}/extractions`,
+    { method: 'POST' },
+    '触发原文标注失败',
+  )
+}
+
+export function saveIntelligenceChunkAnnotationRequest(submissionId, chunkId, payload) {
+  return requestJson(
+    `/api/intelligence/submissions/${submissionId}/extractions/chunks/${chunkId}/annotation`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    },
+    '保存标注备注失败',
+  )
+}

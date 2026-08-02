@@ -12,6 +12,8 @@ from ..db import get_db
 from ..intelligence.errors import IntelligenceError, InvalidIntelligenceInput
 from ..intelligence.repository import IntelligenceRepository, SubmissionBundle
 from ..intelligence.sources import SourceAdapterRegistry
+from ..intelligence.extraction.repository import ExtractionRepository
+from .extraction import serialize_extraction
 
 router = APIRouter(prefix="/api/intelligence/submissions", tags=["interview-intelligence"])
 
@@ -33,6 +35,13 @@ class SupplementRequest(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
 
     content: str = Field(min_length=1, max_length=200_000)
+
+
+class ChunkAnnotationRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    note_text: str | None = Field(default=None, max_length=2000)
+    review_status: str = Field(pattern="^(confirmed|needs_review|rejected)$")
 
 
 @router.post("")
@@ -101,6 +110,52 @@ def retry_submission(submission_id: UUID, db: Session = Depends(get_db)):
     db.flush()
     bundle = repository.get_bundle(db, result.submission_id)
     return _serialize_bundle(bundle, include_content=True)
+
+
+@router.post("/{submission_id}/extractions")
+def trigger_extraction(submission_id: UUID, response: Response, db: Session = Depends(get_db)):
+    bundle = IntelligenceRepository.get_bundle(db, submission_id)
+    if bundle is None:
+        raise HTTPException(status_code=404, detail="面经提交不存在")
+    if bundle.document is None:
+        raise HTTPException(status_code=409, detail="面经正文尚未成功入库")
+    run, created = ExtractionRepository.trigger(db, bundle.document.id)
+    db.flush()
+    response.status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+    return {"created": created, "extraction": serialize_extraction(db, bundle.document, run)}
+
+
+@router.get("/{submission_id}/extractions")
+def get_extraction(submission_id: UUID, db: Session = Depends(get_db)):
+    bundle = IntelligenceRepository.get_bundle(db, submission_id)
+    if bundle is None:
+        raise HTTPException(status_code=404, detail="面经提交不存在")
+    if bundle.document is None:
+        return {"extraction": None}
+    run = ExtractionRepository.latest(db, bundle.document.id)
+    return {"extraction": serialize_extraction(db, bundle.document, run) if run else None}
+
+
+@router.patch("/{submission_id}/extractions/chunks/{chunk_id}/annotation")
+def save_chunk_annotation(
+    submission_id: UUID,
+    chunk_id: UUID,
+    payload: ChunkAnnotationRequest,
+    db: Session = Depends(get_db),
+):
+    bundle = IntelligenceRepository.get_bundle(db, submission_id)
+    if bundle is None:
+        raise HTTPException(status_code=404, detail="面经提交不存在")
+    chunk = ExtractionRepository.chunk_for_document(db, chunk_id, bundle.submission.document_id)
+    if chunk is None:
+        raise HTTPException(status_code=404, detail="内容块不存在")
+    annotation = ExtractionRepository.save_annotation(db, chunk_id, payload.note_text, payload.review_status)
+    return {
+        "chunk_id": str(annotation.chunk_id),
+        "note_text": annotation.note_text,
+        "review_status": annotation.review_status,
+        "updated_at": _iso(annotation.updated_at),
+    }
 
 
 def _http_error(exc: IntelligenceError, status_code: int) -> HTTPException:

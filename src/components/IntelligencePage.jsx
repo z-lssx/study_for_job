@@ -13,6 +13,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import { useIntelligenceData } from '../hooks/useIntelligenceData'
+import { ExtractionPanel } from './intelligence/ExtractionPanel'
 
 const STATUS = {
   queued: { label: '已排队', code: 'QUEUE', icon: Clock3 },
@@ -93,11 +94,11 @@ function IntakeForm({ onSubmit }) {
       {notice && <div className="intake-message success"><CheckCircle2 size={15} />{notice}</div>}
       <button className="action-primary" disabled={saving}>{saving ? <><LoaderCircle className="spin" size={17} />写入中</> : <><ScanText size={17} />提交并处理</>}</button>
     </form>
-    <footer><ShieldCheck size={16} /><span>SSRF、robots、重定向、超时、体积和内容类型均在服务端校验；失败后始终可补正文。</span></footer>
+    <footer><ShieldCheck size={16} /><span>服务端执行来源、robots、重定向、超时、体积和类型检查；已登记的外网安全边界风险仍待后续治理。</span></footer>
   </section>
 }
 
-function DetailPanel({ item, onSupplement, onRetry }) {
+function DetailPanel({ item, onSupplement, onRetry, onTriggerExtraction, onSaveAnnotation }) {
   const [showSupplement, setShowSupplement] = useState(false)
   const [content, setContent] = useState('')
   const [saving, setSaving] = useState(false)
@@ -152,6 +153,7 @@ function DetailPanel({ item, onSupplement, onRetry }) {
       <p>{item.document.content_preview}</p>
       {item.document.preview_truncated && <small>预览已截断，原始事实完整保存在 PostgreSQL。</small>}
     </article> : <div className="intel-processing"><span /><p>{item.status === 'failed' ? '原始输入仍然保留，可在下方恢复处理。' : 'Worker 正在建立原始事实与内容哈希。'}</p></div>}
+    <ExtractionPanel item={item} onTrigger={onTriggerExtraction} onSaveAnnotation={onSaveAnnotation} />
     {error && <div className="intake-message error"><CircleAlert size={15} />{error}</div>}
     {item.status === 'failed' && <div className="recovery-actions">
       {item.can_retry && <button className="action-secondary" disabled={saving} onClick={retry}><RotateCcw size={16} />重新触发</button>}
@@ -165,7 +167,7 @@ function DetailPanel({ item, onSupplement, onRetry }) {
 }
 
 export function IntelligencePage() {
-  const { submissions, selected, loading, error, loadData, selectSubmission, submit, supplement, retry } = useIntelligenceData()
+  const { submissions, selected, loading, error, loadData, selectSubmission, submit, supplement, retry, triggerExtraction, saveChunkAnnotation } = useIntelligenceData()
   const metrics = useMemo(() => ({
     ready: submissions.filter((item) => item.status === 'succeeded').length,
     active: submissions.filter((item) => ['queued', 'processing', 'retry_wait'].includes(item.status)).length,
@@ -192,7 +194,7 @@ export function IntelligencePage() {
             {!loading && submissions.length === 0 && <div className="intel-list-empty">还没有原始面经事实</div>}
             {submissions.map((item) => <SubmissionCard key={item.id} item={item} active={selected?.id === item.id} onSelect={selectSubmission} />)}
           </div>
-          <DetailPanel item={selected} onSupplement={supplement} onRetry={retry} />
+          <DetailPanel item={selected} onSupplement={supplement} onRetry={retry} onTriggerExtraction={triggerExtraction} onSaveAnnotation={saveChunkAnnotation} />
         </div>
       </section>
     </div>

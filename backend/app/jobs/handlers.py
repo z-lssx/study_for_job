@@ -31,10 +31,13 @@ def diagnostic_handler(job: ClaimedJob) -> dict:
 
 
 def build_handler_registry() -> HandlerRegistry:
+    from ..intelligence.extraction.handler import InterviewExtractionHandler
+    from ..intelligence.extraction.repository import EXTRACTION_JOB_TYPE
     from ..intelligence.handler import InterviewIngestionHandler
     from ..intelligence.repository import INGEST_JOB_TYPE
 
     registry = HandlerRegistry()
     registry.register(DIAGNOSTIC_JOB_TYPE, diagnostic_handler)
     registry.register(INGEST_JOB_TYPE, InterviewIngestionHandler())
+    registry.register(EXTRACTION_JOB_TYPE, InterviewExtractionHandler())
     return registry
