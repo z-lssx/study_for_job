@@ -11,6 +11,8 @@
 - `experience-coach.md`
 - `interview-simulation.md`
 - [知识准备轨道](knowledge-track.md)
+- [算法准备轨道](algorithm-track.md)
+- [项目实践证据轨道](project-track.md)
 
 每份模块文档优先说明：
 
