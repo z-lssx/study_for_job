@@ -1,0 +1,1 @@
+"""Interview intelligence intake domain."""

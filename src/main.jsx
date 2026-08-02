@@ -4,6 +4,7 @@ import { ArrowDownRight, CircleAlert, Database, Plus, RefreshCw, Search, Target,
 import { ApplicationBoard, DetailSheet } from './components/ApplicationBoard'
 import { ApplicationForm, ProfileForm } from './components/Forms'
 import { AiAdminPage } from './components/AiAdminPage'
+import { IntelligencePage } from './components/IntelligencePage'
 import { useJobData } from './hooks/useJobData'
 import './styles.css'
 
@@ -74,6 +75,7 @@ function App() {
       </a>
       <nav aria-label="主导航">
         <button className={activeView === 'applications' ? 'active' : ''} onClick={() => setActiveView('applications')}>申请轨道</button>
+        <button className={activeView === 'intelligence' ? 'active' : ''} onClick={() => setActiveView('intelligence')}>面试情报</button>
         <button onClick={() => setShowProfileForm(true)}>目标画像</button>
         <button className={activeView === 'ai' ? 'active' : ''} onClick={() => setActiveView('ai')}>AI 管理</button>
       </nav>
@@ -143,7 +145,7 @@ function App() {
           onCreate={openCreate}
         />
       </section>
-      </> : <AiAdminPage />}
+      </> : activeView === 'intelligence' ? <IntelligencePage /> : <AiAdminPage />}
     </main>
 
     <footer className="page-footer"><span>STUDY_FOR_JOB / LOCAL FIRST</span><span>MOVE WITH INTENT — 2026</span></footer>

@@ -38,6 +38,12 @@ docker compose -f docker-compose.yml -f docker-compose.usage.yml up -d
 
 API 默认从 `POSTGRES_HOST`、`POSTGRES_PORT`、`POSTGRES_USER`、`POSTGRES_PASSWORD`、`POSTGRES_DB` 和连接池变量读取配置，示例见 `.env.example`；也兼容 `DATABASE_URL` 覆盖。SQLAlchemy Engine 统一处理连接池、失效连接探测和事务提交/回滚，表模型位于 `backend/app/models.py`。
 
+## 面试情报原始入库
+
+桌面端顶部进入“面试情报”，可以提交博客园公开文章 URL 或直接粘贴面经正文。系统会立即保存输入并交给独立 Worker 处理；台账可查看来源、采集方式、状态、稳定失败原因、内容哈希和安全纯文本预览。重复 URL/正文会回到既有记录，URL 处理失败后可以保留来源并补正文恢复。
+
+当前 URL 适配器只接受无需登录的博客园公开文章，并在服务端执行 robots、DNS/IP、重定向、超时、体积和内容类型检查；其他来源请直接提交正文。该链路不包含结构化抽取、检索或频率统计。实现边界见 [面经原始事实与可恢复入库链路](docs/tech-architecture/implementation/intelligence-pipeline.md)。
+
 ## AI Gateway 配置
 
 AI Gateway 默认使用确定性的本地 fake provider，不需要外部密钥即可验证成功、失败、token 和 trace 日志。桌面端顶部进入“AI 管理”，可以编辑三个代码批准场景的 system/task 模板、`temperature`、`max_tokens` 和启停状态，并查看按模块/场景聚合的 30 天 token 账本。诊断入口只接受成功/失败开关，不是通用聊天入口。

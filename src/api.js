@@ -111,3 +111,43 @@ export function runAiDiagnosticRequest(simulateFailure = false) {
     'AI Gateway 诊断失败',
   )
 }
+
+export function loadIntelligenceSubmissionsRequest(limit = 100) {
+  return requestJson(`/api/intelligence/submissions?limit=${limit}`, undefined, '读取面经情报失败')
+}
+
+export function loadIntelligenceSubmissionRequest(submissionId) {
+  return requestJson(`/api/intelligence/submissions/${submissionId}`, undefined, '读取面经详情失败')
+}
+
+export function createIntelligenceSubmissionRequest(payload) {
+  return requestJson(
+    '/api/intelligence/submissions',
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    },
+    '提交面经失败',
+  )
+}
+
+export function supplementIntelligenceSubmissionRequest(submissionId, content) {
+  return requestJson(
+    `/api/intelligence/submissions/${submissionId}/supplement`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ content }),
+    },
+    '补充正文失败',
+  )
+}
+
+export function retryIntelligenceSubmissionRequest(submissionId) {
+  return requestJson(
+    `/api/intelligence/submissions/${submissionId}/retry`,
+    { method: 'POST' },
+    '重新触发失败',
+  )
+}

@@ -4,7 +4,7 @@
 
 - [AI Gateway 与调用账本](ai-gateway.md)
 - [PostgreSQL 任务队列与 Worker](job-queue-worker.md)
-- `intelligence-pipeline.md`
+- [面经原始事实与可恢复入库链路](intelligence-pipeline.md)
 - `retrieval.md`
 - `planning.md`
 - `experience-coach.md`
