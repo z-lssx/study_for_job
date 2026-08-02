@@ -340,3 +340,29 @@ class KnowledgeCardEvidence(Base):
     evidence_span_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("evidence_spans.id", ondelete="RESTRICT"), primary_key=True)
     note_text: Mapped[str | None] = mapped_column(Text)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=text("NOW()"))
+
+
+class AlgorithmProblem(Base):
+    """User-owned algorithm practice item with optional intelligence linkage."""
+
+    __tablename__ = "algorithm_problems"
+
+    id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, server_default=text("gen_random_uuid()"))
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    source_url: Mapped[str | None] = mapped_column(Text)
+    source_platform: Mapped[str] = mapped_column(String(80), nullable=False, server_default=text("'manual'"))
+    difficulty: Mapped[str] = mapped_column(String(24), nullable=False, server_default=text("'unknown'"))
+    tags: Mapped[list[str]] = mapped_column(JSONB, nullable=False, server_default=text("'[]'::jsonb"))
+    status: Mapped[str] = mapped_column(String(24), nullable=False, server_default=text("'not_started'"))
+    mistake_reason: Mapped[str | None] = mapped_column(Text)
+    review_notes: Mapped[str | None] = mapped_column(Text)
+    notes: Mapped[str | None] = mapped_column(Text)
+    origin: Mapped[str] = mapped_column(String(32), nullable=False, server_default=text("'user'"))
+    canonical_question_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("canonical_questions.id", ondelete="RESTRICT")
+    )
+    last_practiced_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    next_review_at: Mapped[date | None] = mapped_column(Date)
+    practice_count: Mapped[int] = mapped_column(Integer, nullable=False, server_default=text("0"))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=text("NOW()"))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, server_default=text("NOW()"))
