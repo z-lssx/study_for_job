@@ -8,6 +8,7 @@
 - [面试情报规范题、出现事实与频率统计](intelligence-normalization.md)
 - [面试情报混合检索与质量状态](retrieval.md)
 - [规则优先的准备评估与任务建议](planning.md)
+- [MVP Markdown/JSON 事实关系导出](export.md)
 - `experience-coach.md`
 - `interview-simulation.md`
 - [知识准备轨道](knowledge-track.md)

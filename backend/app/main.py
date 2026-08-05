@@ -16,6 +16,7 @@ from .api.admin_ai import router as admin_ai_router
 from .api.admin_jobs import router as admin_jobs_router
 from .api.algorithms import router as algorithms_router
 from .api.canonical_questions import router as canonical_questions_router
+from .api.exports import router as exports_router
 from .api.intelligence import router as intelligence_router
 from .api.intelligence_search import router as intelligence_search_router
 from .api.internships import router as internships_router
@@ -39,6 +40,7 @@ app.include_router(algorithms_router)
 app.include_router(intelligence_router)
 app.include_router(intelligence_search_router)
 app.include_router(canonical_questions_router)
+app.include_router(exports_router)
 app.include_router(internships_router)
 app.include_router(knowledge_router)
 app.include_router(planning_router)
