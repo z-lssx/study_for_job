@@ -24,7 +24,7 @@
 | T012 | 实习事实资产、STAR/量化表达版本、材料状态与证据关联 | `/root/t012_internships_resume` | `144d220e26701921f936bc42b6ee1502a846b150` | 已随 T013 推送至 `origin/main` |
 | T013 | 桌面工作台沉静化、分组导航、压缩首屏与折叠收纳 | `/root/t013_frontend_refinement` | `a0de554eba69f5b379ba387b6e67bce33d5aa52b` | 已推送至 `origin/main` |
 
-阶段治理收口内容提交：`STAGE_DOCS_SHA`。
+阶段治理收口内容提交：`87b7bdc`。
 
 ## 退出条件逐条结论
 
