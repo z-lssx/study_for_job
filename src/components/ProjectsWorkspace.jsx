@@ -186,13 +186,15 @@ export function ProjectsWorkspace() {
     {error && <p className="projects-error">{error}</p>}
     <div className="projects-layout">
       <aside className="projects-rail">
-        <form className="project-panel project-create" onSubmit={createProject}>
-          <div className="project-panel-title"><Plus size={16} /><strong>新建项目证据包</strong></div>
-          <input name="title" required placeholder="项目名称" maxLength={240} />
-          <input name="target_role" placeholder="目标岗位（可选）" maxLength={160} />
-          <textarea name="summary" placeholder="项目事实摘要" maxLength={2000} rows={3} />
-          <button className="action-primary" type="submit"><FolderKanban size={16} />保存项目</button>
-        </form>
+        <details className="project-panel project-create-shell">
+          <summary><Plus size={16} /><strong>新建项目证据包</strong><span>按需展开</span></summary>
+          <form className="project-create" onSubmit={createProject}>
+            <input name="title" required placeholder="项目名称" maxLength={240} />
+            <input name="target_role" placeholder="目标岗位（可选）" maxLength={160} />
+            <textarea name="summary" placeholder="项目事实摘要" maxLength={2000} rows={3} />
+            <button className="action-primary" type="submit"><FolderKanban size={16} />保存项目</button>
+          </form>
+        </details>
         <div className="project-list">
           {projects.map((project) => <button className={project.id === selectedId ? 'active' : ''} key={project.id} onClick={() => setSelectedId(project.id)}>
             <strong>{project.title}</strong><span>{project.target_role || '未指定目标岗位'} · 证据 {project.evidence.length} · 版本 {project.versions.length}</span>
@@ -202,12 +204,16 @@ export function ProjectsWorkspace() {
       </aside>
 
       {!selected ? <div className="project-empty">选择或新建一个项目，开始整理事实证据。</div> : <div className="project-detail">
-        <form className="project-panel project-facts" onSubmit={saveProject}>
-          <div className="project-section-title"><div><span>01 / FACTS</span><h3>项目基本事实</h3></div><button type="submit">保存修订</button></div>
-          <div className="project-form-grid"><label>项目名称<input name="title" defaultValue={selected.title} required maxLength={240} /></label><label>目标岗位<input name="target_role" defaultValue={selected.target_role || ''} maxLength={160} /></label></div>
-          <label>事实摘要<textarea name="summary" defaultValue={selected.summary || ''} maxLength={2000} rows={3} /></label>
-          <label>状态<select name="status" defaultValue={selected.status}><option value="active">持续维护</option><option value="archived">已归档</option></select></label>
-        </form>
+        <section className="project-panel project-overview">
+          <div className="project-section-title"><div><span>01 / FACTS</span><h3>项目基本事实</h3></div><small>{selected.status === 'active' ? '持续维护' : '已归档'}</small></div>
+          <div className="project-overview-copy"><strong>{selected.title}</strong><span>{selected.target_role || '未指定目标岗位'}</span><p>{selected.summary || '尚未补充项目事实摘要。'}</p></div>
+          <details className="project-create-details"><summary>修订基本事实</summary><form className="project-inline-form project-facts" onSubmit={saveProject}>
+            <div className="project-form-grid"><label>项目名称<input name="title" defaultValue={selected.title} required maxLength={240} /></label><label>目标岗位<input name="target_role" defaultValue={selected.target_role || ''} maxLength={160} /></label></div>
+            <label>事实摘要<textarea name="summary" defaultValue={selected.summary || ''} maxLength={2000} rows={3} /></label>
+            <label>状态<select name="status" defaultValue={selected.status}><option value="active">持续维护</option><option value="archived">已归档</option></select></label>
+            <button type="submit">保存修订</button>
+          </form></details>
+        </section>
 
         <section className="project-panel">
           <div className="project-section-title"><div><span>02 / EVIDENCE</span><h3>证据包</h3></div><small>用户事实与来源分开保存</small></div>

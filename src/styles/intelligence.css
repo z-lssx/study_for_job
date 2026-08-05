@@ -1,18 +1,18 @@
-.intelligence-page { padding-top: 38px; }
-.intel-hero { min-height: 360px; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(390px, .55fr); align-items: center; gap: clamp(40px, 8vw, 130px); border-bottom: 1px solid var(--ink); }
-.intel-hero h1 { margin: 16px 0 22px; font: 500 clamp(50px, 6vw, 90px)/.92 var(--display); letter-spacing: -.065em; }
+.intelligence-page { padding-top: 24px; }
+.intel-hero { min-height: 270px; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(330px, .55fr); align-items: center; gap: clamp(36px, 7vw, 110px); border-bottom: 1px solid var(--line-strong); }
+.intel-hero h1 { margin: 12px 0 18px; font: 500 clamp(42px, 5vw, 66px)/.98 var(--display); letter-spacing: -.055em; }
 .intel-hero h1 em { color: var(--teal); font-style: normal; position: relative; }
-.intel-hero h1 em::after { content: ''; position: absolute; z-index: -1; left: 0; right: -5px; bottom: 4px; height: 10px; background: var(--acid); transform: rotate(-1deg); }
+.intel-hero h1 em::after { content: ''; position: absolute; z-index: -1; left: 0; right: 0; bottom: -2px; height: 4px; background: #b9cec1; }
 .intel-hero > div > p:last-child { max-width: 680px; color: var(--ink-soft); font-size: 14px; line-height: 1.8; }
-.intel-hero > aside { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--ink); background: var(--paper-light); box-shadow: 12px 12px 0 var(--teal); }
-.intel-hero aside > div { min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; padding: 20px 17px; border-right: 1px solid var(--ink); }
+.intel-hero > aside { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--line-strong); background: var(--paper-light); box-shadow: var(--shadow-soft); }
+.intel-hero aside > div { min-height: 112px; display: flex; flex-direction: column; justify-content: space-between; padding: 17px 14px; border-right: 1px solid var(--line); }
 .intel-hero aside > div:last-child { border-right: 0; }
 .intel-hero aside span { color: var(--ink-soft); font: 700 8px var(--mono); letter-spacing: .08em; }
-.intel-hero aside strong { font: 500 44px var(--display); letter-spacing: -.07em; }
+.intel-hero aside strong { font: 500 34px var(--display); letter-spacing: -.05em; }
 .intel-hero aside .has-failure { color: #792719; background: #ffdcd4; }
 
-.intel-workspace { display: grid; grid-template-columns: minmax(330px, .55fr) minmax(680px, 1.45fr); gap: clamp(26px, 4vw, 66px); padding: 58px 0 30px; align-items: start; }
-.intake-console { position: sticky; top: 20px; border: 1px solid var(--ink); background: var(--paper-light); box-shadow: 9px 9px 0 var(--acid); }
+.intel-workspace { display: grid; grid-template-columns: minmax(330px, .55fr) minmax(680px, 1.45fr); gap: clamp(26px, 4vw, 58px); padding: 38px 0 24px; align-items: start; }
+.intake-console { position: sticky; top: 96px; border: 1px solid var(--line-strong); background: var(--paper-light); box-shadow: var(--shadow-soft); }
 .intake-console > header { padding: 28px 28px 24px; border-bottom: 1px solid var(--ink); }
 .intake-console header > span, .intel-ledger > header span { color: var(--cobalt); font: 700 9px var(--mono); letter-spacing: .12em; }
 .intake-console h2, .intel-ledger h2 { margin: 9px 0 11px; font: 500 29px/1 var(--display); letter-spacing: -.04em; }
@@ -20,7 +20,7 @@
 .intake-mode { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--ink); }
 .intake-mode button { min-height: 54px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 0; border-right: 1px solid var(--ink); background: transparent; font-size: 11px; font-weight: 800; }
 .intake-mode button:last-child { border-right: 0; }
-.intake-mode button:hover, .intake-mode button.active { background: var(--acid); }
+.intake-mode button:hover, .intake-mode button.active { color: #f7f7f2; background: var(--teal); }
 .intake-console form { padding: 26px 28px 30px; }
 .intake-console form > label { display: grid; gap: 10px; }
 .intake-console label > span { color: var(--ink-soft); font: 700 8px var(--mono); letter-spacing: .1em; }

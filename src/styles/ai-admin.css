@@ -1,14 +1,14 @@
-.ai-admin-page { padding-top: 44px; }
-.admin-hero { min-height: 390px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(320px, .6fr); gap: clamp(40px, 8vw, 140px); align-items: center; border-bottom: 1px solid var(--line); }
-.admin-hero h1 { margin: 18px 0 22px; font: 900 clamp(46px, 5.8vw, 88px)/.94 var(--display); letter-spacing: -.055em; }
+.ai-admin-page { padding-top: 24px; }
+.admin-hero { min-height: 290px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(300px, .6fr); gap: clamp(38px, 7vw, 110px); align-items: center; border-bottom: 1px solid var(--line); }
+.admin-hero h1 { margin: 12px 0 18px; font: 500 clamp(40px, 5vw, 64px)/.98 var(--display); letter-spacing: -.05em; }
 .admin-hero h1 em { color: var(--cobalt); font-style: normal; }
 .admin-hero > div > p:last-child { max-width: 700px; color: var(--muted); font-size: 15px; line-height: 1.8; }
-.runtime-card { position: relative; padding: 30px; color: var(--paper-light); background: var(--ink); box-shadow: 14px 14px 0 var(--acid); }
+.runtime-card { position: relative; padding: 26px; color: var(--paper-light); background: var(--ink); border-left: 4px solid #8fa99b; box-shadow: var(--shadow-soft); }
 .runtime-card > span, .admin-section-label { font: 700 9px var(--mono); letter-spacing: .15em; text-transform: uppercase; }
-.runtime-card h2 { margin: 18px 0 4px; color: var(--acid); font: 900 36px var(--display); text-transform: uppercase; }
+.runtime-card h2 { margin: 18px 0 4px; color: #d8e4dc; font: 500 32px var(--display); text-transform: uppercase; }
 .runtime-card > code { color: #bfc2b8; font: 11px var(--mono); }
 .runtime-card > p { display: flex; gap: 7px; align-items: center; margin: 24px 0 18px; color: #bec2b8; font-size: 11px; }
-.runtime-icon { position: absolute; top: 22px; right: 22px; width: 50px; height: 50px; display: grid; place-items: center; color: var(--ink); background: var(--acid); border-radius: 50%; }
+.runtime-icon { position: absolute; top: 22px; right: 22px; width: 42px; height: 42px; display: grid; place-items: center; color: var(--ink); background: #d8e4dc; border-radius: 50%; }
 .diagnostic-actions { display: flex; gap: 8px; }
 .diagnostic-actions button, .admin-toolbar button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; padding: 10px 13px; border: 1px solid #6a6e65; color: var(--paper-light); background: transparent; font-size: 11px; font-weight: 800; }
 .diagnostic-actions button:hover { color: var(--ink); background: var(--acid); }

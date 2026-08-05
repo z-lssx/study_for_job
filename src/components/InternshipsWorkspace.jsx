@@ -62,14 +62,16 @@ export function InternshipsWorkspace() {
     {error && <p className="internships-error">{error}</p>}
     <div className="internships-layout">
       <aside className="internships-rail">
-        <form className="internship-panel internship-create" onSubmit={createInternship}>
-          <div className="internship-panel-title"><Plus size={16} /><strong>新建实习资产包</strong></div>
-          <input name="organization" required placeholder="公司 / 组织" maxLength={240} />
-          <input name="role_title" required placeholder="岗位 / 角色" maxLength={160} />
-          <div className="internship-form-grid"><label>开始<input name="started_on" type="date" /></label><label>结束<input name="ended_on" type="date" /></label></div>
-          <textarea name="summary" placeholder="经历事实摘要" maxLength={2000} rows={3} />
-          <button className="action-primary" type="submit"><BriefcaseBusiness size={16} />保存经历</button>
-        </form>
+        <details className="internship-panel internship-create-shell">
+          <summary><Plus size={16} /><strong>新建实习资产包</strong><span>按需展开</span></summary>
+          <form className="internship-create" onSubmit={createInternship}>
+            <input name="organization" required placeholder="公司 / 组织" maxLength={240} />
+            <input name="role_title" required placeholder="岗位 / 角色" maxLength={160} />
+            <div className="internship-form-grid"><label>开始<input name="started_on" type="date" /></label><label>结束<input name="ended_on" type="date" /></label></div>
+            <textarea name="summary" placeholder="经历事实摘要" maxLength={2000} rows={3} />
+            <button className="action-primary" type="submit"><BriefcaseBusiness size={16} />保存经历</button>
+          </form>
+        </details>
         <div className="internship-list">
           {internships.map((item) => <button className={item.id === selectedId ? 'active' : ''} key={item.id} onClick={() => setSelectedId(item.id)}>
             <strong>{item.organization}</strong><span>{item.role_title} · 事实 {item.facts.length} · 材料 {item.materials.length}</span>

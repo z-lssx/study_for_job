@@ -84,14 +84,19 @@ export function AlgorithmWorkspace() {
     {error && <p className="algorithm-error">{error}</p>}
     {random && <article className="algorithm-random"><div><span className="algorithm-kicker">LIGHT PRACTICE / ONE QUESTION</span><h3>{random.title}</h3><p>{random.source_platform}{random.difficulty !== 'unknown' ? ` · ${difficulties.find(([value]) => value === random.difficulty)?.[1]}` : ''}</p>{random.source_url && <a href={random.source_url} target="_blank" rel="noreferrer">打开题目来源</a>}</div><button onClick={() => practice(random)} disabled={random.status === 'solved'}><Check size={15} />记录一次练习</button></article>}
     <div className="algorithm-grid">
-      <form className="algorithm-card algorithm-create" onSubmit={createProblem}>
-        <div className="algorithm-card-title"><Plus size={16} /><strong>加入题单</strong></div>
-        <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="题目标题" maxLength={240} />
-        <input value={sourceUrl} onChange={(event) => setSourceUrl(event.target.value)} placeholder="来源 URL（可选）" maxLength={2048} />
-        <div className="algorithm-inline"><input value={sourcePlatform} onChange={(event) => setSourcePlatform(event.target.value)} placeholder="平台" maxLength={80} /><select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>{difficulties.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
-        <input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="标签，用逗号分隔" maxLength={500} />
-        <button className="action-primary" type="submit"><BrainCircuit size={16} />保存题目</button>
-      </form>
+      <aside className="algorithm-rail">
+        <details className="algorithm-card algorithm-create">
+          <summary><Plus size={16} /><strong>加入题单</strong><span>按需展开</span></summary>
+          <form onSubmit={createProblem}>
+            <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="题目标题" maxLength={240} />
+            <input value={sourceUrl} onChange={(event) => setSourceUrl(event.target.value)} placeholder="来源 URL（可选）" maxLength={2048} />
+            <div className="algorithm-inline"><input value={sourcePlatform} onChange={(event) => setSourcePlatform(event.target.value)} placeholder="平台" maxLength={80} /><select value={difficulty} onChange={(event) => setDifficulty(event.target.value)}>{difficulties.map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></div>
+            <input value={tags} onChange={(event) => setTags(event.target.value)} placeholder="标签，用逗号分隔" maxLength={500} />
+            <button className="action-primary" type="submit"><BrainCircuit size={16} />保存题目</button>
+          </form>
+        </details>
+        <p className="algorithm-guidance"><span>{String(problems.length).padStart(2, '0')}</span> 道题<br />随机练习始终只展开一题。</p>
+      </aside>
       <div className="algorithm-list">
         {problems.length === 0 && <div className="algorithm-empty">题单还是空的，从一道近期要练的题开始。</div>}
         {problems.map((problem) => <article className="algorithm-card" key={problem.id}>

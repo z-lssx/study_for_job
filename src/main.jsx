@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ArrowDownRight, CircleAlert, Database, Plus, RefreshCw, Search, Target, Zap } from 'lucide-react'
+import { ArrowDownRight, CircleAlert, Database, Plus, RefreshCw, Search, Target } from 'lucide-react'
 import { ApplicationBoard, DetailSheet } from './components/ApplicationBoard'
 import { ApplicationForm, ProfileForm } from './components/Forms'
 import { AiAdminPage } from './components/AiAdminPage'
@@ -78,14 +78,29 @@ function App() {
         <span>S/J</span><strong>STUDY<br />FOR JOB</strong>
       </a>
       <nav aria-label="主导航">
-        <button className={activeView === 'applications' ? 'active' : ''} onClick={() => setActiveView('applications')}>申请轨道</button>
-        <button className={activeView === 'intelligence' ? 'active' : ''} onClick={() => setActiveView('intelligence')}>面试情报</button>
-        <button className={activeView === 'knowledge' ? 'active' : ''} onClick={() => setActiveView('knowledge')}>知识复习</button>
-        <button className={activeView === 'algorithms' ? 'active' : ''} onClick={() => setActiveView('algorithms')}>算法练习</button>
-        <button className={activeView === 'projects' ? 'active' : ''} onClick={() => setActiveView('projects')}>项目证据</button>
-        <button className={activeView === 'internships' ? 'active' : ''} onClick={() => setActiveView('internships')}>实习资产</button>
-        <button onClick={() => setShowProfileForm(true)}>目标画像</button>
-        <button className={activeView === 'ai' ? 'active' : ''} onClick={() => setActiveView('ai')}>AI 管理</button>
+        <div className="nav-group nav-flow">
+          <span>工作流</span>
+          <div>
+            <button className={activeView === 'applications' ? 'active' : ''} onClick={() => setActiveView('applications')}>申请</button>
+            <button className={activeView === 'intelligence' ? 'active' : ''} onClick={() => setActiveView('intelligence')}>情报</button>
+          </div>
+        </div>
+        <div className="nav-group nav-preparation">
+          <span>准备轨道</span>
+          <div>
+            <button className={activeView === 'knowledge' ? 'active' : ''} onClick={() => setActiveView('knowledge')}>知识</button>
+            <button className={activeView === 'algorithms' ? 'active' : ''} onClick={() => setActiveView('algorithms')}>算法</button>
+            <button className={activeView === 'projects' ? 'active' : ''} onClick={() => setActiveView('projects')}>项目</button>
+            <button className={activeView === 'internships' ? 'active' : ''} onClick={() => setActiveView('internships')}>实习</button>
+          </div>
+        </div>
+        <div className="nav-group nav-settings">
+          <span>设置</span>
+          <div>
+            <button onClick={() => setShowProfileForm(true)}>画像</button>
+            <button className={activeView === 'ai' ? 'active' : ''} onClick={() => setActiveView('ai')}>AI</button>
+          </div>
+        </div>
       </nav>
       <div className={`environment-stamp ${isDevelopment ? 'development' : 'usage'}`}>
         <Database size={14} />
@@ -105,13 +120,6 @@ function App() {
             <button className="action-primary" onClick={openCreate}><Plus size={18} />新增投递</button>
             <button className="refresh-action" onClick={loadData}><RefreshCw size={16} />刷新事实</button>
           </div>
-        </div>
-
-        <div className="pulse-orbit" aria-hidden="true">
-          <span className="orbit orbit-one" /><span className="orbit orbit-two" />
-          <strong>{String(metrics.active).padStart(2, '0')}</strong>
-          <small>ACTIVE<br />THREADS</small>
-          <Zap size={24} />
         </div>
 
         <aside className="metric-stack" aria-label="求职进度摘要">
