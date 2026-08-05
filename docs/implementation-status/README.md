@@ -13,3 +13,10 @@
 - `archive/`：按阶段保存已被稳定事实源替代、但仍需追溯的过程文档。
 
 项目大总管维护宏观控制状态与路线图；阶段总管维护当前阶段状态、队列、计划和交接；开发 Agent 只更新与本次任务相关的事实，不重新规划阶段或项目。
+
+当前阶段四的首选入口：
+
+- 阶段计划：`management-plans/M004-phase-four.md`
+- 当前状态与队列：`current.md`、`queue.md`
+- 正式交接：`handoffs/M004-phase-four-handoff.md`
+- 稳定实现事实：`../tech-architecture/implementation/planning.md`、`../tech-architecture/implementation/export.md`
