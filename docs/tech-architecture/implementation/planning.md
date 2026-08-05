@@ -1,6 +1,6 @@
 # 规则优先的准备评估与任务建议
 
-状态：T014 已实现同步只读业务链路（2026-08-06）。
+状态：T014 已实现同步只读业务链路，T015 已实现页面主动触发入口（2026-08-06）。
 
 ## 解决的问题与调用契约
 
@@ -53,8 +53,18 @@
 
 结构化情报只读取规范题映射与 occurrence 聚合。只有最终选中的条目才查询展示证据，并在 SQL 中直接截取最多 240 字符的清洗纯文本片段；不会把 `raw_content` 或完整 `cleaned_content` 载入策略服务。证据保留 canonical question/occurrence/evidence span/document/submission/source URL 与字符区间。无回链证据时返回 `no_linked_evidence`，而不是生成依据。
 
-本链路不调用 AI Gateway/LLM，不实现 semantic/synonym recall、embedding、pgvector、RAG、统一评分、多轮 Agent、页面或导出。
+T014 后端链路不调用 AI Gateway/LLM，不实现 semantic/synonym recall、embedding、pgvector、RAG、统一评分、多轮 Agent 或导出；T015 只增加下述人工页面入口，没有改变这些后端边界。
+
+## 页面主动触发与展示契约
+
+桌面工作台的“策略”入口复用既有目标画像与投递列表，只在用户提交表单时调用 `POST /api/planning/assessments`。页面打开、模式切换、日期/画像变更均不会生成策略；没有定时器、轮询、后台任务或推送。`as_of_date` 以可见的本地日期作为初值且允许修改，请求中始终显式传入。
+
+页面支持三种模式和可选目标画像。`pre_interview` 可由用户主动提供现有 application 与明确 `interview_date`；两项不完整时省略整个 `interview_context`，仍请求通用面试前模式。页面不读取、不展示为面试日期，也不自动回填 `applications.key_date`。返回的 `application_context.reliable/reason_code` 决定弱信号状态；界面明确说明该信号最多只做同档经历岗位匹配的次级排序。
+
+建议条目直接按响应 `items` 数组顺序呈现，不在前端重新排序。每项显示 API `order`、priority tier、轨道、建议与目标、reason codes/解释、source types、业务 ID、frequency/application signal、evidence status/refs 和 limitations。frequency 被标记为“结构化需求信号”，不显示或推导统一分数；草稿、AI 起草来源、表达版本、情报关联、无证据内容均保持原类别，不渲染成已确认能力。
+
+规则版本、显式触发标记、输入摘要、排序契约、完整 snapshot fingerprint 与 warnings 保留在结果区。首次进入、API 错误、无可操作项、无证据以及面试弱信号未启用都有独立降级说明；旧结果在新请求失败时保留，用户可调整输入后再次主动提交。
 
 ## 验证边界与限制
 
-按用户最高优先级规则，本任务没有编写或执行测试、静态语法检查、迁移验证、API/数据库运行态验证、页面/浏览器验收或构建。仅完成数据/状态、排序、事实分类、投递上限、证据读取、显式触发与非范围的逻辑检查；运行时兼容性仍未验证，不能据此宣称 API 或数据库链路已运行通过。
+按用户最高优先级规则，T014/T015 没有编写或执行测试、静态语法检查、迁移验证、API/数据库运行态验证、页面/浏览器验收或构建。T014 仅完成数据/状态、排序、事实分类、投递上限、证据读取、显式触发与非范围的逻辑检查；T015 仅完成提交路径、请求参数、API order 保留、展示文案、降级状态和无自动化的逻辑检查。运行时兼容性与真实视觉行为仍未验证，不能据此宣称 API、数据库或页面链路已运行通过。

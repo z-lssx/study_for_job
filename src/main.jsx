@@ -9,6 +9,7 @@ import { KnowledgeWorkspace } from './components/KnowledgeWorkspace'
 import { AlgorithmWorkspace } from './components/AlgorithmWorkspace'
 import { ProjectsWorkspace } from './components/ProjectsWorkspace'
 import { InternshipsWorkspace } from './components/InternshipsWorkspace'
+import { PlanningWorkspace } from './components/PlanningWorkspace'
 import { useJobData } from './hooks/useJobData'
 import './styles.css'
 
@@ -22,6 +23,7 @@ function dateStamp() {
 
 function App() {
   const {
+    profiles,
     profile,
     applications,
     selected,
@@ -83,6 +85,7 @@ function App() {
           <div>
             <button className={activeView === 'applications' ? 'active' : ''} onClick={() => setActiveView('applications')}>申请</button>
             <button className={activeView === 'intelligence' ? 'active' : ''} onClick={() => setActiveView('intelligence')}>情报</button>
+            <button className={activeView === 'planning' ? 'active' : ''} onClick={() => setActiveView('planning')}>策略</button>
           </div>
         </div>
         <div className="nav-group nav-preparation">
@@ -161,7 +164,7 @@ function App() {
           onCreate={openCreate}
         />
       </section>
-      </> : activeView === 'intelligence' ? <IntelligenceWorkspace /> : activeView === 'knowledge' ? <KnowledgeWorkspace /> : activeView === 'algorithms' ? <AlgorithmWorkspace /> : activeView === 'projects' ? <ProjectsWorkspace /> : activeView === 'internships' ? <InternshipsWorkspace /> : <AiAdminPage />}
+      </> : activeView === 'intelligence' ? <IntelligenceWorkspace /> : activeView === 'planning' ? <PlanningWorkspace profiles={profiles} applications={applications} onOpenTrack={setActiveView} /> : activeView === 'knowledge' ? <KnowledgeWorkspace /> : activeView === 'algorithms' ? <AlgorithmWorkspace /> : activeView === 'projects' ? <ProjectsWorkspace /> : activeView === 'internships' ? <InternshipsWorkspace /> : <AiAdminPage />}
     </main>
 
     <footer className="page-footer"><span>STUDY_FOR_JOB / LOCAL FIRST</span><span>MOVE WITH INTENT — 2026</span></footer>

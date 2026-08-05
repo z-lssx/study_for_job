@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { saveApplicationRequest, saveProfileRequest } from '../api'
 
 export function useJobData() {
+  const [profiles, setProfiles] = useState([])
   const [profile, setProfile] = useState(null)
   const [applications, setApplications] = useState([])
   const [selectedId, setSelectedId] = useState(null)
@@ -21,13 +22,14 @@ export function useJobData() {
       if (!healthResponse.ok || !profileResponse.ok || !applicationsResponse.ok) {
         throw new Error('数据链路暂不可用，请检查 API 与 PostgreSQL。')
       }
-      const [health, profiles, nextApplications] = await Promise.all([
+      const [health, nextProfiles, nextApplications] = await Promise.all([
         healthResponse.json(),
         profileResponse.json(),
         applicationsResponse.json(),
       ])
       setEnvironment(health.environment || 'development')
-      setProfile(profiles[0] || null)
+      setProfiles(nextProfiles)
+      setProfile(nextProfiles[0] || null)
       setApplications(nextApplications)
       setSelectedId((current) => current && nextApplications.some((item) => item.id === current) ? current : null)
     } catch (caught) {
@@ -58,6 +60,7 @@ export function useJobData() {
   }, [loadData, profile?.id])
 
   return {
+    profiles,
     profile,
     applications,
     selected,
