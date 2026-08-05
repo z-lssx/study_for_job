@@ -18,6 +18,7 @@ from .api.algorithms import router as algorithms_router
 from .api.canonical_questions import router as canonical_questions_router
 from .api.intelligence import router as intelligence_router
 from .api.intelligence_search import router as intelligence_search_router
+from .api.internships import router as internships_router
 from .api.knowledge import router as knowledge_router
 from .api.projects import router as projects_router
 from .db import engine, get_db
@@ -37,6 +38,7 @@ app.include_router(algorithms_router)
 app.include_router(intelligence_router)
 app.include_router(intelligence_search_router)
 app.include_router(canonical_questions_router)
+app.include_router(internships_router)
 app.include_router(knowledge_router)
 app.include_router(projects_router)
 

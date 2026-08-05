@@ -13,6 +13,7 @@
 - [知识准备轨道](knowledge-track.md)
 - [算法准备轨道](algorithm-track.md)
 - [项目实践证据轨道](project-track.md)
+- [实习经历与材料资产轨道](internship-track.md)
 
 每份模块文档优先说明：
 
