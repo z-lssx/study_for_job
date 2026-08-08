@@ -25,7 +25,7 @@ export function InternshipIntelligencePanel({ internship, questions, onChange, o
   }
 
   return <section className="internship-panel">
-    <div className="internship-section-title"><div><span>05 / INTELLIGENCE</span><h3>规范题与面经证据回链</h3></div><small>频率仅供解释</small></div>
+    <div className="internship-section-title"><div><span>情报关联</span><h3>规范题与面经证据回链</h3></div><small>频率仅供解释</small></div>
     <details className="internship-create-details">
       <summary><Link2 size={14} />建立显式关联</summary>
       <form className="internship-inline-form" onSubmit={linkIntelligence}>

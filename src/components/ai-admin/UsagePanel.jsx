@@ -30,7 +30,7 @@ export function UsagePanel({ prompts, statistics, calls }) {
 
   return <section className="usage-console">
     <header className="usage-heading">
-      <div><p className="admin-section-label">OBSERVABILITY / 30 DAYS</p><h2>调用与 token 账本</h2></div>
+      <div><p className="admin-section-label">近 30 天调用观察</p><h2>调用与 token 账本</h2></div>
       <div className="usage-filters">
         <label>模块<select value={moduleFilter} onChange={(event) => { setModuleFilter(event.target.value); setScenarioFilter('all') }}><option value="all">全部模块</option>{modules.map((module) => <option key={module}>{module}</option>)}</select></label>
         <label>场景<select value={scenarioFilter} onChange={(event) => setScenarioFilter(event.target.value)}><option value="all">全部场景</option>{prompts.filter((item) => moduleFilter === 'all' || item.module === moduleFilter).map((item) => <option key={item.scenario_key} value={item.scenario_key}>{item.name}</option>)}</select></label>

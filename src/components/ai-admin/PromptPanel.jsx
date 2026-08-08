@@ -1,12 +1,15 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Braces, Check, Save } from 'lucide-react'
 
-function PromptEditor({ prompt, onSave }) {
+function PromptEditor({ prompt, onSave, onDirtyChange }) {
   const [form, setForm] = useState({ ...prompt })
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState('')
   const [error, setError] = useState('')
-  const update = (key, value) => setForm((current) => ({ ...current, [key]: value }))
+  const update = (key, value) => {
+    setForm((current) => ({ ...current, [key]: value }))
+    onDirtyChange(true)
+  }
 
   async function submit(event) {
     event.preventDefault()
@@ -16,6 +19,7 @@ function PromptEditor({ prompt, onSave }) {
     try {
       await onSave(prompt.scenario_key, form)
       setMessage('配置已写入 PostgreSQL')
+      onDirtyChange(false)
     } catch (caught) {
       setError(caught.message)
     } finally {
@@ -44,16 +48,40 @@ function PromptEditor({ prompt, onSave }) {
 
 export function PromptPanel({ prompts, onSave }) {
   const [selectedKey, setSelectedKey] = useState('')
+  const [dirty, setDirty] = useState(false)
   const resolvedKey = prompts.some((item) => item.scenario_key === selectedKey) ? selectedKey : prompts[0]?.scenario_key
   const selected = prompts.find((item) => item.scenario_key === resolvedKey)
 
+  useEffect(() => {
+    const warnOnUnload = (event) => {
+      if (!dirty) return
+      event.preventDefault()
+      event.returnValue = ''
+    }
+    window.addEventListener('beforeunload', warnOnUnload)
+    const confirmNavigation = (event) => {
+      if (dirty && !window.confirm('当前 Prompt 修改尚未保存，确认离开 AI 设置吗？')) event.preventDefault()
+    }
+    window.addEventListener('app:navigate', confirmNavigation)
+    return () => {
+      window.removeEventListener('beforeunload', warnOnUnload)
+      window.removeEventListener('app:navigate', confirmNavigation)
+    }
+  }, [dirty])
+
+  function selectPrompt(key) {
+    if (dirty && !window.confirm('当前 Prompt 修改尚未保存，确认切换场景吗？')) return
+    setDirty(false)
+    setSelectedKey(key)
+  }
+
   return <section className="prompt-workbench">
     <aside className="prompt-index">
-      <div className="admin-section-label">PROMPT / REGISTRY</div>
+      <div className="admin-section-label">Prompt 场景配置</div>
       {prompts.map((prompt, index) => <button
         key={prompt.scenario_key}
         className={prompt.scenario_key === resolvedKey ? 'active' : ''}
-        onClick={() => setSelectedKey(prompt.scenario_key)}
+        onClick={() => selectPrompt(prompt.scenario_key)}
       >
         <span>{String(index + 1).padStart(2, '0')}</span>
         <strong>{prompt.name}</strong>
@@ -61,6 +89,6 @@ export function PromptPanel({ prompts, onSave }) {
         <i className={prompt.enabled ? 'enabled' : ''} />
       </button>)}
     </aside>
-    {selected ? <PromptEditor key={selected.scenario_key} prompt={selected} onSave={onSave} /> : <div className="admin-empty">没有可配置的关键场景</div>}
+    {selected ? <PromptEditor key={selected.scenario_key} prompt={selected} onSave={onSave} onDirtyChange={setDirty} /> : <div className="admin-empty">没有可配置的关键场景</div>}
   </section>
 }

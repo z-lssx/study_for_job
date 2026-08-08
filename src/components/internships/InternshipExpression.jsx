@@ -51,7 +51,7 @@ export function InternshipExpressionPanel({ internship, onChange, onError }) {
   }
 
   return <section className="internship-panel">
-    <div className="internship-section-title"><div><span>03 / STAR</span><h3>STAR 与量化表达版本</h3></div><small>确认后保留历史</small></div>
+    <div className="internship-section-title"><div><span>表达版本</span><h3>STAR 与量化表达版本</h3></div><small>确认后保留历史</small></div>
     <details className="internship-create-details">
       <summary>创建新表达版本</summary>
       <form className="internship-inline-form" onSubmit={createVersion}>

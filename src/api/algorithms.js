@@ -4,6 +4,10 @@ export function loadAlgorithmProblemsRequest(params = '') {
   return requestJson(`/api/algorithms${params ? `?${params}` : ''}`, undefined, '读取算法题单失败')
 }
 
+export function loadAlgorithmProblemRequest(problemId) {
+  return requestJson(`/api/algorithms/${problemId}`, undefined, '读取算法题详情失败')
+}
+
 export function randomAlgorithmProblemRequest() {
   return requestJson('/api/algorithms/random', undefined, '获取随机练习题失败')
 }

@@ -124,3 +124,37 @@
 @keyframes planningSpin { to { transform: rotate(360deg); } }
 @media (max-width: 1000px) { .planning-layout { grid-template-columns: 1fr; } .planning-control { position: static; } .planning-control form { grid-template-columns: repeat(2, minmax(0, 1fr)); } .planning-mode-field, .planning-interview-context, .planning-submit, .planning-submit-note { grid-column: 1 / -1; } }
 @media (max-width: 760px) { .planning-heading, .planning-snapshot { align-items: flex-start; flex-direction: column; } .planning-control form { grid-template-columns: 1fr; } .planning-mode-field, .planning-interview-context, .planning-submit, .planning-submit-note { grid-column: auto; } .planning-item-main, .planning-explanation-grid, .planning-detail-body, .planning-contract-grid { grid-template-columns: 1fr; } .planning-explanation-grid > section + section, .planning-detail-body > section + section, .planning-contract-grid > section + section { border-left: 0; border-top: 1px solid var(--line); } .planning-context-result { grid-template-columns: 1fr; } .planning-item-head { flex-wrap: wrap; padding-block: .55rem; } .planning-item-head button { width: 100%; margin-left: 0; } .planning-signal-grid { grid-template-columns: 1fr; } }
+
+/* Frontend redesign: calm research desk overrides. */
+.planning-workspace { --teal: var(--green); --cobalt: var(--green); --coral: var(--clay); --paper-light: var(--surface-raised); --shadow-soft: none; max-width: none; margin: 0; padding: 0; }
+.planning-rule-badge, .export-rule-badge { min-height: 40px; border-radius: 8px; color: var(--green); background: var(--green-soft); font: 700 14px var(--body); }
+.planning-layout { grid-template-columns: minmax(290px, 350px) minmax(0, 1fr); gap: 22px; }
+.planning-control, .planning-pristine, .planning-loading, .planning-empty, .planning-item, .planning-snapshot-details { border-radius: 11px; background: var(--surface); box-shadow: none; }
+.planning-control { top: 28px; padding: 20px; }
+.planning-mode-field legend, .planning-field > span { font: 700 14px var(--body); letter-spacing: 0; text-transform: none; }
+.planning-mode-field label { min-height: 64px; grid-template-columns: 20px 72px 1fr; border-radius: 8px; background: var(--surface-raised); }
+.planning-mode-field label.selected { border-color: var(--green); background: var(--green-soft); }
+.planning-mode-field strong { font: 700 15px var(--body); }
+.planning-mode-field span, .planning-field small, .planning-submit-note, .planning-context-toggle small, .planning-context-status, .planning-key-date-note { font-size: 13px; }
+.planning-field input, .planning-field select { min-height: 44px; border-radius: 8px; background: var(--surface-raised); font-size: 14px; }
+.planning-interview-context { border-left-color: var(--green); border-radius: 8px; background: var(--surface-muted); }
+.planning-context-toggle strong { font-size: 14px; }
+.planning-pristine h3, .planning-empty h3 { font-size: 24px; }
+.planning-pristine p:last-child, .planning-empty p, .planning-loading, .planning-error p, .planning-error strong { font-size: 14px; }
+.planning-error, .planning-warnings { border-radius: 9px; }
+.planning-snapshot { border-radius: 11px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); }
+.planning-snapshot h3 { font-size: 24px; }.planning-snapshot p:not(.section-code) { color: var(--ink-soft); font-size: 14px; }.planning-snapshot > span { color: var(--green); font: 700 13px var(--body); }
+.planning-context-result { border-radius: 9px; }.planning-context-result strong, .planning-context-result p { font-size: 14px; }.planning-context-result small { font-size: 13px; }
+.planning-context-result code, .planning-warnings code, .planning-explanation-grid code, .planning-contract-grid code { font-size: 12px; }
+.planning-warnings h4, .planning-explanation-grid h4, .planning-detail-body h4, .planning-contract-grid h4 { font: 700 14px var(--body); letter-spacing: 0; text-transform: none; }
+.planning-warnings p, .planning-order-contract { font-size: 14px; }
+.planning-item { border-radius: 11px; background: var(--surface); }
+.planning-item-head { min-height: 52px; }.planning-order { font-size: 13px; }.planning-track, .planning-tier, .planning-item-head button { font-size: 13px; }
+.planning-item h3 { font-size: clamp(21px, 2vw, 27px); }.planning-item-id { font-size: 12px; }.planning-target { font-size: 14px; }
+.planning-signal-grid dt { font: 600 12px var(--body); text-transform: none; }.planning-signal-grid dd, .planning-signal-grid small { font-size: 13px; }
+.planning-explanation-grid ol p, .planning-source-list strong, .planning-boundary-note, .planning-details > summary, .planning-snapshot-details > summary { font-size: 14px; }
+.planning-source-list li, .planning-evidence-ref { border-radius: 7px; background: var(--surface-raised); }
+.planning-evidence-ref { border-left-color: var(--green); }.planning-evidence-ref > div, .planning-evidence-ref p, .planning-evidence-ref a, .planning-no-evidence, .planning-limit-list li { font-size: 13px; }
+.planning-evidence-ref blockquote { font: 500 16px/1.7 var(--body); }.planning-ref-ids, .planning-business-ids dd { font-size: 12px !important; }
+.planning-business-ids dt, .planning-contract-grid p, .planning-contract-grid ol, .planning-contract-grid dl > div { font-size: 13px; }
+@media (max-width: 1000px) { .planning-layout { grid-template-columns: 1fr; }.planning-control { position: static; } }

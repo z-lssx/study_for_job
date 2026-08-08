@@ -54,6 +54,22 @@ export function saveApplicationRequest(payload, applicationId) {
   )
 }
 
+export function patchApplicationRequest(applicationId, changes) {
+  return requestJson(
+    `/api/applications/${applicationId}`,
+    {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(changes),
+    },
+    '更新投递状态失败',
+  )
+}
+
+export function loadApplicationRequest(applicationId) {
+  return requestJson(`/api/applications/${applicationId}`, undefined, '读取投递详情失败')
+}
+
 export function saveProfileRequest(payload, profileId) {
   return requestJson(
     profileId ? `/api/target-profiles/${profileId}` : '/api/target-profiles',

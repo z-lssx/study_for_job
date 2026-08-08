@@ -74,3 +74,26 @@
 @keyframes exportSpin { to { transform: rotate(360deg); } }
 @media (max-width: 1000px) { .export-layout { grid-template-columns: 1fr; } .export-control { position: static; } .export-control form { grid-template-columns: 1fr 1fr; } .export-format-field, .export-boundary-card, .export-submit, .export-submit-note { grid-column: 1 / -1; } }
 @media (max-width: 760px) { .export-heading, .export-snapshot-head, .export-download-card { align-items: flex-start; flex-direction: column; } .export-control form { grid-template-columns: 1fr; } .export-format-field, .export-boundary-card, .export-submit, .export-submit-note { grid-column: auto; } .export-count-grid { grid-template-columns: 1fr 1fr; } .export-count-grid div { border-bottom: 1px solid var(--line); } .export-detail-grid { grid-template-columns: 1fr; } .export-detail-grid section + section { border-left: 0; border-top: 1px solid var(--line); } .export-download-card button { width: 100%; justify-content: center; } }
+
+/* Frontend redesign: keep the single export task readable and calm. */
+.export-workspace { --teal: var(--green); --coral: var(--clay); --paper-light: var(--surface-raised); --shadow-soft: none; max-width: none; margin: 0; padding: 0; }
+.export-rule-badge { min-height: 40px; border-radius: 8px; color: var(--green); background: var(--green-soft); font: 700 14px var(--body); }
+.export-layout { grid-template-columns: minmax(310px, 370px) minmax(0, 1fr); gap: 22px; }
+.export-control { top: 28px; border-radius: 11px; background: var(--surface); box-shadow: none; }
+.export-control form { padding: 20px; }
+.export-format-field legend, .export-date-field > span { font: 700 14px var(--body); letter-spacing: 0; text-transform: none; }
+.export-format-field label { border-radius: 8px; background: var(--surface-raised); }
+.export-format-field label:hover, .export-format-field label.selected { border-color: var(--green); background: var(--green-soft); }
+.export-format-field input { width: 1px; height: 1px; opacity: 0; pointer-events: auto; }
+.export-format-field label:focus-within { outline: 2px solid var(--green); outline-offset: 3px; }
+.export-format-field small, .export-date-field small, .export-submit-note { font: 400 13px/1.55 var(--body); text-transform: none; }
+.export-format-field strong { font: 700 16px var(--body); }.export-format-field p { font-size: 13px; }
+.export-date-field input { min-height: 44px; border-radius: 8px; background: var(--surface-raised); font-size: 14px; }
+.export-boundary-card { border-left-color: var(--clay); border-radius: 8px; background: var(--surface-muted); }.export-boundary-card strong { font: 700 15px var(--body); }.export-boundary-card ul { font-size: 13px; }
+.export-pristine, .export-loading, .export-error, .export-snapshot-head, .export-count-grid, .export-empty, .export-download-card, .export-warnings, .export-details { border-radius: 11px; }
+.export-pristine h3, .export-empty h3 { font-size: 24px; }.export-pristine > p:last-child, .export-empty p, .export-loading, .export-error strong, .export-error p, .export-error small { font-size: 14px; }
+.export-snapshot-head { color: var(--ink); border: 1px solid var(--line); background: var(--surface); }.export-snapshot-head h3 { font-size: 23px; }.export-snapshot-head p { color: var(--ink-soft); font-size: 14px; }.export-snapshot-head > span { color: var(--green); font: 700 13px var(--body); }
+.export-count-grid span { font: 600 13px var(--body); }.export-count-grid strong { font-size: 25px; }
+.export-download-card { border-color: var(--green); background: var(--green-soft); }.export-download-card span { color: var(--green); font: 700 13px var(--body); letter-spacing: 0; }.export-download-card strong { font: 700 15px var(--body); }.export-download-card p { font-size: 13px; }.export-download-card button { border-radius: 8px; color: #fff; border-color: var(--green); background: var(--green); font-size: 14px; }
+.export-warnings p, .export-details summary, .export-detail-grid ul { font-size: 14px; }.export-warnings code, .export-detail-grid pre, .export-fingerprint code { font-size: 12px; }
+@media (max-width: 1000px) { .export-layout { grid-template-columns: 1fr; }.export-control { position: static; } }

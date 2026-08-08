@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Check, X } from 'lucide-react'
-import { EMPTY_APPLICATION, EMPTY_PROFILE, STAGES } from '../constants'
+import { EMPTY_APPLICATION, STAGES } from '../constants'
+import { useUnsavedGuard } from '../hooks/useUnsavedGuard'
 
 function ModalFrame({ eyebrow, title, children, saving, error, submitLabel, onClose, onSubmit }) {
   useEffect(() => {
@@ -10,9 +11,9 @@ function ModalFrame({ eyebrow, title, children, saving, error, submitLabel, onCl
   }, [onClose])
 
   return <div className="modal-backdrop" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-    <form className="editor-modal" onSubmit={onSubmit}>
+    <form className="editor-modal" role="dialog" aria-modal="true" aria-labelledby="editor-modal-title" onSubmit={onSubmit}>
       <header className="editor-header">
-        <div><p>{eyebrow}</p><h2>{title}</h2></div>
+        <div><p>{eyebrow}</p><h2 id="editor-modal-title">{title}</h2></div>
         <button type="button" className="bare-icon" onClick={onClose} aria-label="关闭表单"><X size={20} /></button>
       </header>
       {error && <div className="form-error">{error}</div>}
@@ -30,6 +31,10 @@ export function ApplicationForm({ initial, onClose, onSubmit }) {
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
   const update = (key, value) => setForm((current) => ({ ...current, [key]: value }))
+  const baseline = initial ? { ...initial } : EMPTY_APPLICATION
+  const dirty = JSON.stringify(form) !== JSON.stringify(baseline)
+  useUnsavedGuard(dirty, '投递记录还有未保存的修改，确定离开吗？')
+  const guardedClose = () => (!dirty || window.confirm('还有未保存的修改，确定离开吗？')) && onClose()
 
   async function submit(event) {
     event.preventDefault()
@@ -39,12 +44,12 @@ export function ApplicationForm({ initial, onClose, onSubmit }) {
   }
 
   return <ModalFrame
-    eyebrow={initial ? 'UPDATE / FACT' : 'NEW / APPLICATION'}
+    eyebrow={initial ? '编辑投递事实' : '新增投递'}
     title={initial ? '编辑投递记录' : '把新机会放上轨道'}
     saving={saving}
     error={error}
     submitLabel="保存记录"
-    onClose={onClose}
+    onClose={guardedClose}
     onSubmit={submit}
   >
     <div className="editor-grid">
@@ -62,37 +67,6 @@ export function ApplicationForm({ initial, onClose, onSubmit }) {
       <label className="wide">下一步动作<input value={form.next_action || ''} onChange={(event) => update('next_action', event.target.value)} placeholder="把动作写具体，下一次打开就能开始" /></label>
       <label className="wide">岗位链接<input type="url" value={form.url || ''} onChange={(event) => update('url', event.target.value)} placeholder="https://" /></label>
       <label className="wide">备注<textarea rows="4" value={form.notes || ''} onChange={(event) => update('notes', event.target.value)} placeholder="面试线索、联系人、需要验证的问题…" /></label>
-    </div>
-  </ModalFrame>
-}
-
-export function ProfileForm({ initial, onClose, onSubmit }) {
-  const [form, setForm] = useState(initial ? { ...initial } : EMPTY_PROFILE)
-  const [saving, setSaving] = useState(false)
-  const [error, setError] = useState('')
-  const update = (key, value) => setForm((current) => ({ ...current, [key]: value }))
-
-  async function submit(event) {
-    event.preventDefault()
-    setSaving(true)
-    setError('')
-    try { await onSubmit(form) } catch (caught) { setError(caught.message) } finally { setSaving(false) }
-  }
-
-  return <ModalFrame
-    eyebrow="TARGET / PROFILE"
-    title={initial ? '校准目标画像' : '定义你的主航向'}
-    saving={saving}
-    error={error}
-    submitLabel="保存画像"
-    onClose={onClose}
-    onSubmit={submit}
-  >
-    <div className="editor-grid">
-      <label className="wide">岗位名称<input autoFocus required value={form.title} onChange={(event) => update('title', event.target.value)} placeholder="例如：Agent 工程师 / Java 后端" /></label>
-      <label>目标地点<input value={form.location || ''} onChange={(event) => update('location', event.target.value)} /></label>
-      <label>重点方向<input value={form.focus || ''} onChange={(event) => update('focus', event.target.value)} /></label>
-      <label className="wide">画像摘要<textarea rows="5" value={form.summary || ''} onChange={(event) => update('summary', event.target.value)} placeholder="你的能力组合、偏好与边界" /></label>
     </div>
   </ModalFrame>
 }

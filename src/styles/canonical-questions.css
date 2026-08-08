@@ -1,34 +1,33 @@
-.canonical-panel { margin: 30px 0 58px; border-top: 1px solid var(--line-strong); }
-.canonical-panel > header { min-height: 126px; display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 34px; border-bottom: 1px solid var(--line-strong); }
-.canonical-panel > header > div:first-child > span { color: var(--cobalt); font: 700 9px var(--mono); letter-spacing: .12em; }
-.canonical-panel h2 { margin: 9px 0 8px; font: 500 clamp(29px, 4vw, 48px)/1 var(--display); letter-spacing: -.045em; }
-.canonical-panel > header p { max-width: 680px; margin: 0; color: var(--ink-soft); font-size: 10px; line-height: 1.65; }
-.canonical-metrics { display: grid; grid-template-columns: auto auto; align-items: baseline; gap: 2px 10px; padding: 15px 20px; border: 1px solid var(--line-strong); background: var(--paper-light); box-shadow: var(--shadow-soft); }
-.canonical-metrics strong { font: 500 30px var(--display); }.canonical-metrics span { color: var(--ink-soft); font: 700 8px var(--mono); }
-.canonical-body { min-height: 620px; display: grid; grid-template-columns: minmax(260px, .55fr) minmax(0, 1.45fr); border-bottom: 1px solid var(--ink); }
-.canonical-list { max-height: 760px; overflow-y: auto; border-right: 1px solid var(--ink); }
-.canonical-list > p { min-height: 180px; display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--ink-soft); font: 700 9px var(--mono); }
-.canonical-list > button { width: 100%; min-height: 106px; display: grid; grid-template-columns: 28px 1fr auto; gap: 6px 10px; padding: 18px; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: transparent; }
-.canonical-list > button:hover { background: #ffffff70; }.canonical-list > button.active { color: var(--paper-light); background: var(--ink); }
-.canonical-list button > span { color: var(--cobalt); font: 700 8px var(--mono); }.canonical-list button > strong { font: 500 17px/1.25 var(--display); }
-.canonical-list button > b { color: var(--teal); font: 500 29px var(--display); }.canonical-list button > small { grid-column: 2 / 4; color: var(--ink-soft); font: 700 8px var(--mono); }
-.canonical-list button.active > small { color: #aeb2a8; }
-.canonical-detail { min-width: 0; padding: 34px clamp(24px, 4vw, 52px) 50px; }
-.canonical-empty { min-height: 460px; display: grid; place-content: center; justify-items: center; text-align: center; color: var(--ink-soft); }
-.canonical-empty h3 { margin: 12px 0 5px; color: var(--ink); font: 500 25px var(--display); }.canonical-empty p { margin: 0; font-size: 9px; }
-.canonical-detail > header > span { color: var(--teal); font: 700 8px var(--mono); letter-spacing: .1em; }.canonical-detail > header h3 { margin: 8px 0 24px; font: 500 31px/1.2 var(--display); }
-.canonical-merge { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-bottom: 22px; padding: 12px; border: 1px solid var(--ink); background: #ffffff68; }
-.canonical-merge select, .occurrence-correction input, .occurrence-correction select { min-width: 0; padding: 9px; border: 1px solid var(--line); background: var(--paper-light); font-size: 9px; }
-.canonical-merge button, .occurrence-correction button { display: flex; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--ink); background: var(--acid); font-size: 9px; font-weight: 800; }
-.occurrence-stack { display: grid; gap: 14px; }.occurrence-card { border: 1px solid var(--ink); background: #ffffff65; }
-.occurrence-card > div { display: grid; gap: 7px; padding: 17px 19px; }.occurrence-card > div span { color: var(--cobalt); font: 700 8px var(--mono); }
-.occurrence-card > div strong { font: 500 19px/1.3 var(--display); }.occurrence-card > div small { color: var(--ink-soft); font-size: 9px; }
-.occurrence-card blockquote { margin: 0; padding: 15px 19px; color: #d9dcd2; background: var(--ink); font-size: 10px; line-height: 1.7; }
-.occurrence-card > footer { display: grid; grid-template-columns: 1fr auto; gap: 7px 14px; padding: 12px 19px; color: var(--ink-soft); }
-.occurrence-card footer code { font: 7px var(--mono); overflow-wrap: anywhere; }.occurrence-card footer a { display: flex; align-items: center; gap: 4px; color: var(--cobalt); font-size: 8px; font-weight: 800; }
-.occurrence-card footer span { grid-column: 1 / -1; font: 700 8px var(--mono); }
-.occurrence-correction { border-top: 1px solid var(--line); }.occurrence-correction summary { padding: 11px 19px; cursor: pointer; color: var(--ink-soft); font: 700 8px var(--mono); }
-.occurrence-correction > div { display: grid; grid-template-columns: 1fr 84px; gap: 8px; padding: 0 19px 12px; }.occurrence-correction label { min-width: 0; display: grid; gap: 5px; }
-.occurrence-correction label span { color: var(--ink-soft); font: 700 7px var(--mono); }.occurrence-correction button { min-height: 34px; align-self: end; }
-@media (max-width: 980px) { .canonical-panel > header { grid-template-columns: 1fr auto; padding: 28px 0; }.canonical-panel > header > button { grid-column: 1 / -1; justify-self: start; }.canonical-body { grid-template-columns: 1fr; }.canonical-list { max-height: 330px; border-right: 0; border-bottom: 1px solid var(--ink); } }
-@media (max-width: 620px) { .canonical-panel > header { grid-template-columns: 1fr; }.canonical-metrics { justify-self: start; }.canonical-merge, .occurrence-correction > div { grid-template-columns: 1fr; }.canonical-detail { padding-inline: 18px; } }
+.canonical-panel { overflow: hidden; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); }
+.canonical-panel > header { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 22px; padding: 22px 24px; border-bottom: 1px solid var(--line); }
+.canonical-panel > header > div:first-child > span { color: var(--green); font-size: 13px; font-weight: 700; }
+.canonical-panel > header h2 { margin: 4px 0; font: 500 22px/1.4 var(--display); }
+.canonical-panel > header p { margin: 0; color: var(--ink-soft); font-size: 14px; }
+.canonical-metrics { display: grid; grid-template-columns: auto auto; align-items: baseline; gap: 2px 8px; min-width: 132px; padding: 11px 15px; border-radius: 9px; background: var(--surface-muted); }
+.canonical-metrics strong { color: var(--green); font: 500 23px var(--display); }.canonical-metrics span { color: var(--ink-faint); font-size: 13px; }
+.canonical-body { min-height: 520px; display: grid; grid-template-columns: minmax(270px, 340px) minmax(0, 1fr); }
+.canonical-list { max-height: 700px; overflow-y: auto; border-right: 1px solid var(--line); }
+.canonical-list > p { display: flex; align-items: center; gap: 8px; padding: 22px; color: var(--ink-soft); font-size: 14px; }
+.canonical-list > button { width: 100%; min-height: 82px; display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 3px 9px; align-items: center; padding: 13px 15px; border: 0; border-bottom: 1px solid var(--line); text-align: left; background: transparent; }
+.canonical-list > button:hover, .canonical-list > button.active { background: var(--surface-muted); }
+.canonical-list > button.active { box-shadow: inset 3px 0 var(--green); }
+.canonical-list > button > span { color: var(--ink-faint); font-size: 13px; }.canonical-list > button strong { font-size: 14px; line-height: 1.45; }.canonical-list > button b { color: var(--green); font: 500 20px var(--display); }.canonical-list > button small { grid-column: 2 / -1; color: var(--ink-faint); font-size: 13px; }
+.canonical-detail { min-width: 0; padding: 28px 30px 36px; }
+.canonical-empty { min-height: 360px; display: grid; place-content: center; justify-items: center; color: var(--ink-faint); text-align: center; }
+.canonical-empty h3 { margin: 12px 0 4px; font: 500 21px var(--display); }.canonical-empty p { margin: 0; font-size: 14px; }
+.canonical-detail > header span { color: var(--green); font-size: 13px; font-weight: 700; }.canonical-detail > header h3 { margin: 5px 0 20px; font: 500 25px/1.45 var(--display); }
+.canonical-merge { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 9px; margin-bottom: 20px; padding: 15px; border-radius: 9px; background: var(--surface-muted); }
+.canonical-merge select, .occurrence-correction input, .occurrence-correction select { min-width: 0; padding: 10px 11px; border: 1px solid var(--line-strong); border-radius: 7px; background: var(--surface-raised); font-size: 14px; }
+.canonical-merge button, .occurrence-correction button { display: flex; align-items: center; justify-content: center; gap: 6px; padding: 0 13px; border: 1px solid var(--green); border-radius: 7px; color: var(--green); background: transparent; font-size: 14px; font-weight: 700; }
+.occurrence-stack { display: grid; gap: 14px; }
+.occurrence-card { overflow: hidden; border: 1px solid var(--line); border-radius: 9px; background: var(--surface-raised); }
+.occurrence-card > div:first-child { display: grid; gap: 4px; padding: 17px 18px; }.occurrence-card > div span { color: var(--green); font-size: 13px; }.occurrence-card > div strong { font-size: 16px; }.occurrence-card > div small { color: var(--ink-faint); font-size: 13px; }
+.occurrence-card blockquote { margin: 0; padding: 17px 18px; border-block: 1px solid var(--line); font-size: 16px; line-height: 1.7; }
+.occurrence-card footer { display: flex; flex-wrap: wrap; align-items: center; gap: 9px 16px; padding: 12px 18px; color: var(--ink-faint); font-size: 13px; }
+.occurrence-card footer code { overflow-wrap: anywhere; font: 12px var(--mono); }.occurrence-card footer a { display: flex; align-items: center; gap: 5px; color: var(--green); font-size: 13px; text-decoration: none; }
+.occurrence-correction { border-top: 1px solid var(--line); }
+.occurrence-correction summary { padding: 12px 18px; color: var(--green); cursor: pointer; font-size: 13px; font-weight: 700; }
+.occurrence-correction > div { display: grid; grid-template-columns: minmax(0, 1fr) 95px; gap: 9px; padding: 0 18px 13px; }
+.occurrence-correction label { min-width: 0; display: grid; gap: 5px; color: var(--ink-soft); font-size: 13px; }
+@media (max-width: 1080px) { .canonical-panel > header { grid-template-columns: 1fr auto; }.canonical-panel > header > button { grid-column: 1 / -1; justify-self: start; } }
+@media (max-width: 860px) { .canonical-body { grid-template-columns: 1fr; }.canonical-list { max-height: 330px; border-right: 0; border-bottom: 1px solid var(--line); }.canonical-merge, .occurrence-correction > div { grid-template-columns: 1fr; } }

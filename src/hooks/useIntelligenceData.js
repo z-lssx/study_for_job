@@ -24,9 +24,10 @@ export function useIntelligenceData() {
       const items = await loadIntelligenceSubmissionsRequest()
       setSubmissions(items)
       if (selectedId.current) {
-        const detail = await loadIntelligenceSubmissionRequest(selectedId.current)
-        const extraction = await loadIntelligenceExtractionRequest(selectedId.current)
-        setSelected({ ...detail, extraction: extraction.extraction })
+        const requestedId = selectedId.current
+        const detail = await loadIntelligenceSubmissionRequest(requestedId)
+        const extraction = await loadIntelligenceExtractionRequest(requestedId)
+        if (selectedId.current === requestedId) setSelected({ ...detail, extraction: extraction.extraction })
       }
       return items
     } catch (caught) {
@@ -48,15 +49,18 @@ export function useIntelligenceData() {
 
   const selectSubmission = useCallback(async (submissionId) => {
     setError('')
+    selectedId.current = submissionId
+    setSelected(null)
     try {
-      const detail = await loadIntelligenceSubmissionRequest(submissionId)
-      const extraction = await loadIntelligenceExtractionRequest(submissionId)
-      selectedId.current = submissionId
+      const [detail, extraction] = await Promise.all([
+        loadIntelligenceSubmissionRequest(submissionId),
+        loadIntelligenceExtractionRequest(submissionId),
+      ])
       const merged = { ...detail, extraction: extraction.extraction }
-      setSelected(merged)
+      if (selectedId.current === submissionId) setSelected(merged)
       return merged
     } catch (caught) {
-      setError(caught.message)
+      if (selectedId.current === submissionId) setError(caught.message)
       throw caught
     }
   }, [])
@@ -77,17 +81,17 @@ export function useIntelligenceData() {
 
   const supplement = useCallback(async (submissionId, content) => {
     const result = await supplementIntelligenceSubmissionRequest(submissionId, content)
-    selectedId.current = submissionId
+    if (selectedId.current !== submissionId) return result
     await loadData(true)
-    setSelected(result)
+    if (selectedId.current === submissionId) setSelected(result)
     return result
   }, [loadData])
 
   const retry = useCallback(async (submissionId) => {
     const result = await retryIntelligenceSubmissionRequest(submissionId)
-    selectedId.current = submissionId
+    if (selectedId.current !== submissionId) return result
     await loadData(true)
-    setSelected(result)
+    if (selectedId.current === submissionId) setSelected(result)
     return result
   }, [loadData])
 

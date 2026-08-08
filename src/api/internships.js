@@ -7,6 +7,7 @@ const jsonOptions = (method, payload) => ({
 })
 
 export const loadInternshipsRequest = () => requestJson('/api/internships', undefined, '读取实习资产失败')
+export const loadInternshipRequest = (id) => requestJson(`/api/internships/${id}`, undefined, '读取实习详情失败')
 export const createInternshipRequest = (payload) => requestJson('/api/internships', jsonOptions('POST', payload), '创建实习经历失败')
 export const updateInternshipRequest = (id, payload) => requestJson(`/api/internships/${id}`, jsonOptions('PATCH', payload), '更新实习事实失败')
 export const createInternshipFactRequest = (id, payload) => requestJson(`/api/internships/${id}/facts`, jsonOptions('POST', payload), '保存实习事实失败')

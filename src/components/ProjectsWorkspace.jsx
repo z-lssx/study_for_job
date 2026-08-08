@@ -1,18 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { Archive, Check, FolderKanban, Link2, Plus, RotateCcw, ShieldCheck } from 'lucide-react'
+import React, { useEffect, useRef, useState } from 'react'
+import { Archive, ArrowLeft, Check, Link2, PencilLine, Plus, RotateCcw, ShieldCheck } from 'lucide-react'
 import { loadCanonicalQuestionsRequest } from '../api/canonicalQuestions'
 import {
   confirmProjectVersionRequest,
   createProjectEvidenceRequest,
-  createProjectRequest,
   createProjectVersionRequest,
   linkProjectIntelligenceRequest,
+  loadProjectRequest,
   loadProjectsRequest,
   unlinkProjectIntelligenceRequest,
   updateProjectEvidenceRequest,
   updateProjectRequest,
   updateProjectVersionRequest,
 } from '../api/projects'
+import { useUnsavedGuard } from '../hooks/useUnsavedGuard'
+import './knowledge.css'
 import './projects.css'
 
 const evidenceCategories = [
@@ -40,49 +42,55 @@ function followUpText(items) {
   return (items || []).map((item) => item.question).filter(Boolean).join('\n')
 }
 
-export function ProjectsWorkspace() {
+export function ProjectsWorkspace({ selectedId, mode = 'view', navigate = () => {} }) {
   const [projects, setProjects] = useState([])
-  const [selectedId, setSelectedId] = useState(null)
+  const [selected, setSelected] = useState(null)
   const [canonicalQuestions, setCanonicalQuestions] = useState([])
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const selected = useMemo(() => projects.find((project) => project.id === selectedId) || null, [projects, selectedId])
+  const [dirty, setDirty] = useState(false)
+  const requestVersion = useRef(0)
+  const selectedIdRef = useRef(selectedId)
+  selectedIdRef.current = selectedId
+  useUnsavedGuard(dirty && mode === 'edit', '项目证据包还有未保存的修改，确定离开吗？')
 
   function replaceProject(project) {
     setProjects((current) => {
       const exists = current.some((item) => item.id === project.id)
       return exists ? current.map((item) => item.id === project.id ? project : item) : [project, ...current]
     })
-    setSelectedId(project.id)
+    if (selectedIdRef.current === project.id) {
+      setSelected(project)
+      setDirty(false)
+    }
     setError('')
   }
 
   async function refresh() {
+    const version = ++requestVersion.current
+    setLoading(true)
+    if (selectedId) setSelected(null)
     try {
+      if (selectedId) {
+        const item = await loadProjectRequest(selectedId)
+        if (version !== requestVersion.current) return
+        setSelected(item)
+        setError('')
+        return
+      }
       const items = await loadProjectsRequest()
+      if (version !== requestVersion.current) return
       setProjects(items)
-      setSelectedId((current) => items.some((item) => item.id === current) ? current : items[0]?.id || null)
+      setSelected(null)
       setError('')
-    } catch (caught) { setError(caught.message) }
+    } catch (caught) { if (version === requestVersion.current) setError(caught.message) } finally { if (version === requestVersion.current) setLoading(false) }
   }
 
   useEffect(() => {
     refresh()
-    loadCanonicalQuestionsRequest({ limit: 100 }).then(setCanonicalQuestions).catch(() => setCanonicalQuestions([]))
-  }, [])
-
-  async function createProject(event) {
-    event.preventDefault()
-    const values = new FormData(event.currentTarget)
-    try {
-      const project = await createProjectRequest({
-        title: values.get('title'),
-        target_role: values.get('target_role') || null,
-        summary: values.get('summary') || null,
-      })
-      event.currentTarget.reset()
-      replaceProject(project)
-    } catch (caught) { setError(caught.message) }
-  }
+    if (selectedId) loadCanonicalQuestionsRequest({ limit: 100 }).then(setCanonicalQuestions).catch(() => setCanonicalQuestions([]))
+  }, [selectedId])
+  useEffect(() => { setDirty(false) }, [selectedId, mode])
 
   async function saveProject(event) {
     event.preventDefault()
@@ -178,34 +186,27 @@ export function ProjectsWorkspace() {
     } catch (caught) { setError(caught.message) }
   }
 
-  return <section className="projects-workspace">
+  return <section className={`projects-workspace ${selectedId ? 'project-detail-page' : 'project-index-page'} ${mode === 'edit' ? 'track-edit-mode' : 'track-view-mode'}`} onChangeCapture={() => selectedId && mode === 'edit' && setDirty(true)}>
+    {selectedId && <><button className="track-back" type="button" onClick={() => navigate('/projects')}><ArrowLeft size={17} />返回项目轨道</button><nav className="track-breadcrumb" aria-label="面包屑"><button onClick={() => navigate('/projects')}>项目</button><span>/</span><b>{selected?.title || '项目详情'}</b></nav></>}
     <header className="projects-heading">
-      <div><p className="section-code">PREP TRACK / PROJECTS</p><h2>项目事实与表达版本</h2><p>先保存可核实事实，再组织表达；情报频率只解释关联，不替你编造经历。</p></div>
-      <button className="refresh-action" onClick={refresh}><RotateCcw size={15} />刷新</button>
+      <div><p className="track-eyebrow">准备轨道 · 项目</p><h2>{selectedId ? selected?.title || '项目详情' : '把项目组织成可信的证据包'}</h2><p>{selectedId ? '事实、表达版本与情报关联保持各自边界。' : '先保存可核实事实，再组织表达；情报频率只解释关联，不替你编造经历。'}</p></div>
+      <div className="track-heading-actions">{selectedId && <button className="refresh-action" onClick={() => navigate(mode === 'edit' ? `/projects/${selectedId}` : `/projects/${selectedId}/edit`)}><PencilLine size={15} />{mode === 'edit' ? '结束编辑' : '编辑证据包'}</button>}<button className="refresh-action" onClick={refresh}><RotateCcw size={15} />刷新</button></div>
     </header>
     {error && <p className="projects-error">{error}</p>}
-    <div className="projects-layout">
+    {!selectedId ? <div className="projects-index-layout">
       <aside className="projects-rail">
-        <details className="project-panel project-create-shell">
-          <summary><Plus size={16} /><strong>新建项目证据包</strong><span>按需展开</span></summary>
-          <form className="project-create" onSubmit={createProject}>
-            <input name="title" required placeholder="项目名称" maxLength={240} />
-            <input name="target_role" placeholder="目标岗位（可选）" maxLength={160} />
-            <textarea name="summary" placeholder="项目事实摘要" maxLength={2000} rows={3} />
-            <button className="action-primary" type="submit"><FolderKanban size={16} />保存项目</button>
-          </form>
-        </details>
+        <button className="track-new-page-link" onClick={() => navigate('/projects/new')}><Plus size={16} /><span><strong>新建项目证据包</strong><small>进入独立页面整理基本事实</small></span></button>
         <div className="project-list">
-          {projects.map((project) => <button className={project.id === selectedId ? 'active' : ''} key={project.id} onClick={() => setSelectedId(project.id)}>
-            <strong>{project.title}</strong><span>{project.target_role || '未指定目标岗位'} · 证据 {project.evidence.length} · 版本 {project.versions.length}</span>
+          {projects.map((project) => <button key={project.id} onClick={() => navigate(`/projects/${project.id}`)}>
+            <strong>{project.title}</strong><span>{project.target_role || '未指定目标岗位'} · 证据 {project.evidence.length} · 版本 {project.versions.length}</span><small>{project.status === 'active' ? '持续维护' : '已归档'} · 更新于 {new Date(project.updated_at).toLocaleDateString('zh-CN')}</small>
           </button>)}
-          {projects.length === 0 && <p>还没有项目，从一个最熟悉、最能核实的项目开始。</p>}
+          {loading && <p>正在读取项目证据包…</p>}{!loading && projects.length === 0 && <p>还没有项目，从一个最熟悉、最能核实的项目开始。</p>}
         </div>
       </aside>
-
-      {!selected ? <div className="project-empty">选择或新建一个项目，开始整理事实证据。</div> : <div className="project-detail">
+      <section className="projects-index-intro"><span className="track-section-label">证据优先</span><h3>项目不是一段统一话术</h3><p>先保存背景、职责、边界、取舍和指标，再基于这些事实创建 30 秒与 2 分钟表达版本。已确认版本保留历史，不会被后续修订覆盖。</p><dl><div><dt>项目</dt><dd>{projects.length}</dd></div><div><dt>事实证据</dt><dd>{projects.reduce((sum, item) => sum + item.evidence.length, 0)}</dd></div><div><dt>已确认表达</dt><dd>{projects.reduce((sum, item) => sum + item.versions.filter((version) => version.confirmation_status === 'confirmed').length, 0)}</dd></div></dl></section>
+    </div> : !selected ? <div className="project-empty">{loading ? '正在读取项目证据包…' : error || '项目不存在'}</div> : <div className="project-detail">
         <section className="project-panel project-overview">
-          <div className="project-section-title"><div><span>01 / FACTS</span><h3>项目基本事实</h3></div><small>{selected.status === 'active' ? '持续维护' : '已归档'}</small></div>
+          <div className="project-section-title"><div><span>基本事实</span><h3>项目基本事实</h3></div><small>{selected.status === 'active' ? '持续维护' : '已归档'}</small></div>
           <div className="project-overview-copy"><strong>{selected.title}</strong><span>{selected.target_role || '未指定目标岗位'}</span><p>{selected.summary || '尚未补充项目事实摘要。'}</p></div>
           <details className="project-create-details"><summary>修订基本事实</summary><form className="project-inline-form project-facts" onSubmit={saveProject}>
             <div className="project-form-grid"><label>项目名称<input name="title" defaultValue={selected.title} required maxLength={240} /></label><label>目标岗位<input name="target_role" defaultValue={selected.target_role || ''} maxLength={160} /></label></div>
@@ -216,7 +217,7 @@ export function ProjectsWorkspace() {
         </section>
 
         <section className="project-panel">
-          <div className="project-section-title"><div><span>02 / EVIDENCE</span><h3>证据包</h3></div><small>用户事实与来源分开保存</small></div>
+          <div className="project-section-title"><div><span>事实与来源</span><h3>证据包</h3></div><small>用户事实与来源分开保存</small></div>
           <details className="project-create-details"><summary><Plus size={14} />新增事实证据</summary><form className="project-inline-form" onSubmit={createEvidence}>
             <div className="project-form-grid"><label>类别<select name="category">{evidenceCategories.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label><label>来源类型<select name="source_kind">{sourceKinds.map(([value, label]) => <option value={value} key={value}>{label}</option>)}</select></label></div>
             <label>事实陈述<textarea name="statement" required maxLength={10000} rows={3} /></label>
@@ -239,7 +240,7 @@ export function ProjectsWorkspace() {
         </section>
 
         <section className="project-panel">
-          <div className="project-section-title"><div><span>03 / EXPRESSIONS</span><h3>表达版本与历史</h3></div><small>已确认版本不可覆盖</small></div>
+          <div className="project-section-title"><div><span>表达与历史</span><h3>表达版本与历史</h3></div><small>已确认版本不可覆盖</small></div>
           <details className="project-create-details"><summary><Plus size={14} />创建新表达版本</summary><form className="project-inline-form" onSubmit={createVersion}>
             <label>版本标签<input name="label" required placeholder="如：后端岗位首版" maxLength={120} /></label><label>30 秒版本<textarea name="pitch_30s" maxLength={4000} rows={3} /></label><label>2 分钟版本<textarea name="pitch_2m" maxLength={12000} rows={5} /></label><label>追问树（每行一个问题）<textarea name="follow_up_tree" rows={4} /></label><button type="submit">保存为新版本</button>
           </form></details>
@@ -255,7 +256,7 @@ export function ProjectsWorkspace() {
         </section>
 
         <section className="project-panel">
-          <div className="project-section-title"><div><span>04 / INTELLIGENCE</span><h3>岗位考点关联</h3></div><small>出现次数仅供解释</small></div>
+          <div className="project-section-title"><div><span>情报关联</span><h3>岗位考点关联</h3></div><small>出现次数仅供解释</small></div>
           <details className="project-create-details"><summary><Link2 size={14} />关联阶段二规范题</summary><form className="project-inline-form" onSubmit={linkIntelligence}>
             <label>规范题<select name="canonical_question_id" required defaultValue=""><option value="" disabled>选择规范题</option>{canonicalQuestions.map((question) => <option key={question.id} value={question.id}>{question.canonical_text}（{question.occurrence_count} 次）</option>)}</select></label>
             <label>可支撑的项目证据<select name="project_evidence_id" defaultValue=""><option value="">暂不绑定具体证据</option>{selected.evidence.map((evidence) => <option key={evidence.id} value={evidence.id}>{evidence.statement.slice(0, 70)}</option>)}</select></label>
@@ -272,6 +273,5 @@ export function ProjectsWorkspace() {
           </div>
         </section>
       </div>}
-    </div>
   </section>
 }

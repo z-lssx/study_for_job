@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { saveApplicationRequest, saveProfileRequest } from '../api'
+import { useCallback, useEffect, useState } from 'react'
+import { patchApplicationRequest, saveApplicationRequest, saveProfileRequest } from '../api'
 
 export function useJobData() {
   const [profiles, setProfiles] = useState([])
   const [profile, setProfile] = useState(null)
   const [applications, setApplications] = useState([])
-  const [selectedId, setSelectedId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [environment, setEnvironment] = useState('development')
@@ -31,7 +30,6 @@ export function useJobData() {
       setProfiles(nextProfiles)
       setProfile(nextProfiles[0] || null)
       setApplications(nextApplications)
-      setSelectedId((current) => current && nextApplications.some((item) => item.id === current) ? current : null)
     } catch (caught) {
       setError(caught.message)
     } finally {
@@ -41,15 +39,9 @@ export function useJobData() {
 
   useEffect(() => { loadData() }, [loadData])
 
-  const selected = useMemo(
-    () => applications.find((item) => item.id === selectedId) || null,
-    [applications, selectedId],
-  )
-
   const saveApplication = useCallback(async (payload, applicationId = null) => {
     const saved = await saveApplicationRequest(payload, applicationId)
     await loadData()
-    setSelectedId(saved.id)
     return saved
   }, [loadData])
 
@@ -59,19 +51,22 @@ export function useJobData() {
     return saved
   }, [loadData, profile?.id])
 
+  const patchApplication = useCallback(async (applicationId, changes) => {
+    const saved = await patchApplicationRequest(applicationId, changes)
+    setApplications((current) => current.map((item) => item.id === applicationId ? { ...item, ...saved } : item))
+    return saved
+  }, [])
+
   return {
     profiles,
     profile,
     applications,
-    selected,
-    selectedId,
     loading,
     error,
     environment,
     loadData,
     saveApplication,
+    patchApplication,
     saveProfile,
-    selectApplication: setSelectedId,
-    closeSelection: () => setSelectedId(null),
   }
 }

@@ -49,7 +49,7 @@ export function InternshipFactsPanel({ internship, onChange, onError }) {
   }
 
   return <section className="internship-panel">
-    <div className="internship-section-title"><div><span>02 / EVIDENCE</span><h3>职责、协作与结果事实</h3></div><small>表达不能覆盖事实</small></div>
+    <div className="internship-section-title"><div><span>职责与结果</span><h3>职责、协作与结果事实</h3></div><small>表达不能覆盖事实</small></div>
     <details className="internship-create-details">
       <summary>新增可核实事实</summary>
       <form className="internship-inline-form" onSubmit={createFact}>
@@ -126,7 +126,7 @@ export function InternshipMaterialsPanel({ internship, onChange, onError }) {
   }
 
   return <section className="internship-panel">
-    <div className="internship-section-title"><div><span>04 / MATERIALS</span><h3>材料准备清单</h3></div><small>状态由用户维护</small></div>
+    <div className="internship-section-title"><div><span>材料准备</span><h3>材料准备清单</h3></div><small>状态由用户维护</small></div>
     <details className="internship-create-details">
       <summary>新增材料资产</summary>
       <form className="internship-inline-form" onSubmit={createMaterial}>

@@ -9,6 +9,7 @@
 - [面试情报混合检索与质量状态](retrieval.md)
 - [规则优先的准备评估与任务建议](planning.md)
 - [MVP Markdown/JSON 事实关系导出](export.md)
+- [桌面工作台壳层与真实路由](frontend-workbench.md)
 - `experience-coach.md`
 - `interview-simulation.md`
 - [知识准备轨道](knowledge-track.md)

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { AlertTriangle, ArrowUpRight, CalendarDays, CheckCircle2, ClipboardList, RefreshCw, ShieldCheck } from 'lucide-react'
 import { createPlanningAssessmentRequest } from '../api/planning'
+import { PageHeader } from './AppShell'
 import './planning.css'
 
 const modes = [
@@ -96,7 +97,7 @@ function PlanningItem({ item, onOpenTrack }) {
         <p className="planning-target">建议目标：<strong>{item.target.entity_label}</strong><span>画像：{item.target.profile_label}</span></p>
       </div>
       <dl className="planning-signal-grid">
-        <div><dt>priority tier</dt><dd>{tierLabels[item.priority.tier] || item.priority.tier}档 · API 顺序 {item.priority.order}</dd></div>
+        <div><dt>规则优先档位</dt><dd>{tierLabels[item.priority.tier] || item.priority.tier}档 · 接口顺序 {item.priority.order}</dd></div>
         <div><dt>结构化需求信号</dt><dd>{item.frequency_signal ? `${item.frequency_signal.occurrence_count} 次 occurrence` : '本条未使用'}</dd><small>仅用于同档排序，不是能力分数。</small></div>
         <div><dt>投递弱信号</dt><dd>{item.application_signal?.applied ? '已应用' : '未应用'}</dd><small>{item.application_signal?.effect === 'same-tier tie-break only' ? '只影响同档岗位匹配次序。' : '没有改变本条排序。'}{item.application_signal?.application_id ? ` 投递 ${item.application_signal.application_id}` : ''}</small></div>
         <div><dt>证据状态</dt><dd>{evidenceLabels[item.evidence_status] || item.evidence_status}</dd></div>
@@ -133,7 +134,7 @@ function PlanningItem({ item, onOpenTrack }) {
   </article>
 }
 
-export function PlanningWorkspace({ profiles, applications, onOpenTrack }) {
+export function PlanningWorkspace({ profiles, applications, onOpenTrack, navigate }) {
   const [mode, setMode] = useState('daily')
   const [asOfDate, setAsOfDate] = useState(localDateValue)
   const [targetProfileId, setTargetProfileId] = useState('')
@@ -170,11 +171,14 @@ export function PlanningWorkspace({ profiles, applications, onOpenTrack }) {
 
   const context = assessment?.application_context
 
-  return <section className="planning-workspace">
-    <header className="planning-heading">
-      <div><p className="section-code">PLANNING / EXPLICIT REQUEST</p><h2>把下一步排清楚</h2><p>一次点击生成一次规则快照。这里不是 AI 自动规划器，也不会定时刷新、推送或在后台继续运行。</p></div>
-      <span className="planning-rule-badge"><ShieldCheck size={16} />规则优先 · 可解释</span>
-    </header>
+  return <section className="planning-workspace page-stack">
+    <PageHeader
+      eyebrow="准备策略"
+      title="主动生成一次可解释的准备快照"
+      description="明确模式、日期和目标后再提交。页面不会自动生成、定时刷新或在后台继续运行。"
+      action={<span className="planning-rule-badge"><ShieldCheck size={16} />规则优先 · 可解释</span>}
+      navigate={navigate}
+    />
 
     <div className="planning-layout">
       <aside className="planning-control">
@@ -207,12 +211,12 @@ export function PlanningWorkspace({ profiles, applications, onOpenTrack }) {
 
       <div className="planning-results" aria-live="polite">
         {error && <div className="planning-error"><AlertTriangle size={18} /><div><strong>本次建议未生成</strong><p>{error}</p><small>可调整输入后再次点击“生成本次建议”。既有结果不会被改写。</small></div></div>}
-        {!assessment && !loading && !error && <div className="planning-pristine"><CalendarDays size={25} /><p className="section-code">WAITING FOR YOUR REQUEST</p><h3>尚未生成策略快照</h3><p>先确认模式与日期，再主动生成。页面不会在打开时、切换选项时或后台自动请求。</p></div>}
+        {!assessment && !loading && !error && <div className="planning-pristine"><CalendarDays size={25} /><p className="section-code">等待主动生成</p><h3>尚未生成策略快照</h3><p>先确认模式与日期，再主动生成。页面不会在打开时、切换选项时或后台自动请求。</p></div>}
         {loading && <div className="planning-loading"><RefreshCw size={20} className="planning-spinner" /><span>正在读取当前事实并计算规则顺序…</span></div>}
 
         {assessment && !loading && <>
           <section className="planning-snapshot">
-            <div><p className="section-code">RULE SNAPSHOT / {assessment.rule_version}</p><h3>{modes.find(([value]) => value === assessment.mode)?.[1]}建议</h3><p>{assessment.as_of_date} · {assessment.target_profile?.title || '通用目标'} · 返回 {assessment.input_summary.returned_count} / 候选 {assessment.input_summary.candidate_count}</p></div>
+            <div><p className="section-code">规则快照 · {assessment.rule_version}</p><h3>{modes.find(([value]) => value === assessment.mode)?.[1]}建议</h3><p>{assessment.as_of_date} · {assessment.target_profile?.title || '通用目标'} · 返回 {assessment.input_summary.returned_count} / 候选 {assessment.input_summary.candidate_count}</p></div>
             <span><CheckCircle2 size={16} />{assessment.trigger === 'explicit_request' ? '用户主动触发' : assessment.trigger}</span>
           </section>
 
@@ -224,7 +228,7 @@ export function PlanningWorkspace({ profiles, applications, onOpenTrack }) {
 
           {assessment.warnings.length > 0 && <section className="planning-warnings"><h4>边界与提醒</h4><ul>{assessment.warnings.map((warning) => <li key={warning.code}><AlertTriangle size={14} /><div><p>{warning.message}</p><code>{warning.code}</code></div></li>)}</ul></section>}
 
-          <p className="planning-order-contract"><strong>阅读方式</strong> priority tier 是规则优先档位，不是统一能力分；下列条目严格沿用 API order，没有在页面重排。frequency 只表示结构化需求信号。</p>
+          <p className="planning-order-contract"><strong>阅读方式</strong> 优先档位来自规则，不是统一能力分；下列条目严格沿用接口顺序，没有在页面重排。频率只表示结构化需求信号。</p>
 
           {assessment.items.length ? <div className="planning-item-list">{assessment.items.map((item) => <PlanningItem item={item} onOpenTrack={onOpenTrack} key={item.id} />)}</div> : <div className="planning-empty"><h3>当前没有可操作项</h3><p>规则不会为填满列表编造建议。可补充轨道事实、选择目标画像，或在合适日期再次主动生成。</p></div>}
 

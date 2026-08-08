@@ -37,7 +37,7 @@ export function ExtractionPanel({ item, onTrigger, onSaveAnnotation }) {
 
   return <section className="extraction-panel">
     <header>
-      <div><span>STRUCTURED EVIDENCE / T006</span><h3>原文标注与证据链</h3></div>
+      <div><span>原文标注与证据链</span><h3>结构化证据</h3></div>
       {(!extraction || extraction.status === 'failed') && <button className="action-primary" onClick={trigger} disabled={busy}><Tags size={15} />{extraction ? '重新抽取' : '开始标注'}</button>}
     </header>
     {!extraction && <p className="extraction-empty">使用版本化确定性规则标注轮次、块类型、问题与追问；不会把原作者回答当作标准答案。</p>}

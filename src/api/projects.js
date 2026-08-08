@@ -10,6 +10,10 @@ export function loadProjectsRequest() {
   return requestJson('/api/projects', undefined, '读取项目证据包失败')
 }
 
+export function loadProjectRequest(projectId) {
+  return requestJson(`/api/projects/${projectId}`, undefined, '读取项目详情失败')
+}
+
 export function createProjectRequest(payload) {
   return requestJson('/api/projects', jsonOptions('POST', payload), '创建项目失败')
 }

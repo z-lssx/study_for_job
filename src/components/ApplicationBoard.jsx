@@ -1,4 +1,5 @@
-import { ArrowUpRight, CalendarDays, ChevronRight, Link2, MoveRight, PencilLine, X } from 'lucide-react'
+import { useEffect } from 'react'
+import { ArrowUpRight, CalendarDays, ChevronRight, Link2, MoveRight, PencilLine, Plus, X } from 'lucide-react'
 import { STAGES } from '../constants'
 
 function compactDate(value) {
@@ -7,69 +8,50 @@ function compactDate(value) {
   return `${month}.${day}`
 }
 
-function ApplicationCard({ item, order, onSelect }) {
+function ApplicationRow({ item, onSelect }) {
+  const stage = STAGES.find((candidate) => candidate.key === item.stage)
   return <button
-    className="application-ticket"
-    style={{ '--ticket-delay': `${order * 45}ms` }}
+    className="application-row"
     onClick={() => onSelect(item.id)}
   >
-    <span className="ticket-index">{String(order + 1).padStart(2, '0')}</span>
-    <span className="ticket-company">{item.company}</span>
-    <strong>{item.role}</strong>
-    <span className="ticket-rule" />
-    <span className="ticket-date"><CalendarDays size={13} />{compactDate(item.key_date)}</span>
-    <span className="ticket-next">{item.next_action || '补充下一步动作'}<ChevronRight size={14} /></span>
+    <span className={`stage-pill stage-${item.stage}`}>{stage?.label || item.stage}</span>
+    <span className="application-identity"><strong>{item.company}</strong><small>{item.role}</small></span>
+    <span className="application-date"><CalendarDays size={15} />{compactDate(item.key_date)}</span>
+    <span className="application-next"><small>下一步</small><strong>{item.next_action || '补充下一步动作'}</strong></span>
+    <ChevronRight size={17} />
   </button>
 }
 
-function EmptyLane({ stage, onCreate }) {
-  return <button className="empty-lane" onClick={onCreate}>
-    <span>{stage.index}</span>
-    <strong>此轨道为空</strong>
-    <small>建立一条记录</small>
-  </button>
-}
-
-export function ApplicationBoard({ applications, loading, query, onSelect, onCreate }) {
+export function ApplicationBoard({ applications, loading, query, stage = 'all', onSelect, onCreate }) {
   const normalizedQuery = query.trim().toLowerCase()
   const filtered = applications.filter((item) => (
+    (stage === 'all' || item.stage === stage)
+    &&
     `${item.company} ${item.role} ${item.notes || ''} ${item.next_action || ''}`
       .toLowerCase()
       .includes(normalizedQuery)
   ))
 
-  if (loading) return <div className="board-loading"><span />正在同步事实轨道</div>
+  if (loading) return <div className="ledger-skeleton" aria-label="正在同步投递事实"><i /><i /><i /><i /></div>
+  if (filtered.length === 0) return <div className="quiet-empty ledger-empty"><strong>{applications.length ? '当前筛选没有记录' : '还没有投递记录'}</strong><p>{applications.length ? '换一个阶段或搜索词继续查看。' : '新增第一条机会，开始维护阶段和下一步动作。'}</p><button className="button-primary" onClick={onCreate}><Plus size={16} />新增投递</button></div>
 
-  return <div className="stage-board">
-    {STAGES.map((stage) => {
-      const stageItems = filtered.filter((item) => item.stage === stage.key)
-      return <section className={`stage-lane lane-${stage.tone}`} key={stage.key}>
-        <header className="lane-heading">
-          <div><span>{stage.index}</span><h3>{stage.label}</h3></div>
-          <strong>{String(stageItems.length).padStart(2, '0')}</strong>
-        </header>
-        <div className="lane-track">
-          {stageItems.map((item, index) => <ApplicationCard
-            key={item.id}
-            item={item}
-            order={index}
-            onSelect={onSelect}
-          />)}
-          {stageItems.length === 0 && <EmptyLane stage={stage} onCreate={onCreate} />}
-        </div>
-      </section>
-    })}
-  </div>
+  return <div className="application-list">{filtered.map((item) => <ApplicationRow key={item.id} item={item} onSelect={onSelect} />)}</div>
 }
 
 export function DetailSheet({ item, onClose, onEdit, onStageChange }) {
+  useEffect(() => {
+    if (!item) return undefined
+    const closeOnEscape = (event) => event.key === 'Escape' && onClose()
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [item, onClose])
   if (!item) return null
   const currentStage = STAGES.find((stage) => stage.key === item.stage)
 
   return <div className="detail-scrim" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
-    <aside className="detail-sheet" aria-label={`${item.company} 投递详情`}>
+    <aside className="detail-sheet" role="dialog" aria-modal="true" aria-label={`${item.company} 投递详情`}>
       <div className="sheet-topline">
-        <span>APPLICATION / {currentStage?.index}</span>
+        <span>投递详情 · {currentStage?.label}</span>
         <button className="bare-icon" onClick={onClose} aria-label="关闭详情"><X size={20} /></button>
       </div>
       <div className="sheet-title">
@@ -95,7 +77,7 @@ export function DetailSheet({ item, onClose, onEdit, onStageChange }) {
       </dl>
 
       <div className="sheet-note">
-        <span>NOTE / CONTEXT</span>
+        <span>备注与上下文</span>
         <p>{item.notes || '还没有补充备注。'}</p>
       </div>
 

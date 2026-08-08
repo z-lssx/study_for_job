@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   loadCanonicalQuestionDetailRequest,
   loadCanonicalQuestionsRequest,
@@ -13,13 +13,18 @@ export function useCanonicalQuestions() {
   const [selected, setSelected] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const selectedId = useRef(null)
 
   const load = useCallback(async () => {
     setLoading(true); setError('')
     try {
       const rows = await loadCanonicalQuestionsRequest()
       setQuestions(rows)
-      if (selected?.id) setSelected(await loadCanonicalQuestionDetailRequest(selected.id))
+      if (selected?.id) {
+        const requestedId = selected.id
+        const detail = await loadCanonicalQuestionDetailRequest(requestedId)
+        if (selectedId.current === requestedId) setSelected(detail)
+      }
       return rows
     } catch (caught) { setError(caught.message); return [] } finally { setLoading(false) }
   }, [selected?.id])
@@ -34,13 +39,28 @@ export function useCanonicalQuestions() {
 
   const select = useCallback(async (id) => {
     setError('')
-    try { const detail = await loadCanonicalQuestionDetailRequest(id); setSelected(detail); return detail }
-    catch (caught) { setError(caught.message); throw caught }
+    selectedId.current = id
+    setSelected(null)
+    try {
+      const detail = await loadCanonicalQuestionDetailRequest(id)
+      if (selectedId.current === id) setSelected(detail)
+      return detail
+    }
+    catch (caught) { if (selectedId.current === id) setError(caught.message); throw caught }
+  }, [])
+
+  const clearSelected = useCallback(() => {
+    selectedId.current = null
+    setSelected(null)
   }, [])
 
   const afterMutation = useCallback(async (id) => {
     await load()
-    if (id) setSelected(await loadCanonicalQuestionDetailRequest(id).catch(() => null))
+    if (id) {
+      selectedId.current = id
+      const detail = await loadCanonicalQuestionDetailRequest(id).catch(() => null)
+      if (selectedId.current === id) setSelected(detail)
+    }
   }, [load])
 
   const merge = useCallback(async (sourceId, targetId) => {
@@ -58,5 +78,5 @@ export function useCanonicalQuestions() {
     await afterMutation(targetId); return result
   }, [afterMutation])
 
-  return { questions, selected, loading, error, load, refresh, select, merge, split, remap }
+  return { questions, selected, loading, error, load, refresh, select, clearSelected, merge, split, remap }
 }

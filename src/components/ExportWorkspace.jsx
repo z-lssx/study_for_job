@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { AlertTriangle, CalendarDays, Database, Download, FileJson, FileText, RefreshCw, ShieldCheck } from 'lucide-react'
 import { createExportSnapshotRequest } from '../api/exports'
+import { PageHeader } from './AppShell'
 import './export.css'
 
 const formats = [
@@ -39,7 +40,7 @@ function downloadResult(result) {
   URL.revokeObjectURL(url)
 }
 
-export function ExportWorkspace() {
+export function ExportWorkspace({ navigate }) {
   const [format, setFormat] = useState('json')
   const [asOfDate, setAsOfDate] = useState(localDateValue)
   const [result, setResult] = useState(null)
@@ -62,15 +63,14 @@ export function ExportWorkspace() {
   const manifest = result?.manifest
   const isEmpty = manifest?.counts.total_records === 0
 
-  return <section className="export-workspace">
-    <header className="export-heading">
-      <div>
-        <p className="section-code">FACT EXPORT / EXPLICIT REQUEST</p>
-        <h2>带走事实，也带走边界。</h2>
-        <p>从 PostgreSQL 底层业务事实生成一次只读快照。Markdown 与 JSON 使用同一关系模型，不读取页面内存，也不会在后台定时备份或推送。</p>
-      </div>
-      <span className="export-rule-badge"><ShieldCheck size={16} />同源 · 可复现</span>
-    </header>
+  return <section className="export-workspace page-stack">
+    <PageHeader
+      eyebrow="导出"
+      title="生成一次可携带的事实快照"
+      description="Markdown 与 JSON 使用同一关系模型，直接读取 PostgreSQL 当前事实；不会创建定时备份或后台任务。"
+      action={<span className="export-rule-badge"><ShieldCheck size={16} />同源 · 可复现</span>}
+      navigate={navigate}
+    />
 
     <div className="export-layout">
       <aside className="export-control">
@@ -111,7 +111,7 @@ export function ExportWorkspace() {
         {error && <div className="export-error"><AlertTriangle size={18} /><div><strong>本次快照未生成</strong><p>{error}</p><small>已有成功快照不会被失败请求改写；可调整输入后再次主动生成。</small></div></div>}
         {!result && !loading && !error && <div className="export-pristine">
           <CalendarDays size={26} />
-          <p className="section-code">WAITING FOR YOUR REQUEST</p>
+          <p className="section-code">等待主动生成</p>
           <h3>尚未生成事实快照</h3>
           <p>选择格式并确认可见日期，再主动生成。系统不会从当前页面状态拼接数据。</p>
         </div>}
@@ -120,7 +120,7 @@ export function ExportWorkspace() {
         {result && !loading && <>
           <section className="export-snapshot-head">
             <div>
-              <p className="section-code">SNAPSHOT / {manifest.export_version}</p>
+              <p className="section-code">导出快照 · {manifest.export_version}</p>
               <h3>{result.format === 'json' ? 'JSON 规范关系快照' : 'Markdown 可读事实档案'}</h3>
               <p>{manifest.as_of_date} · {manifest.counts.total_records} 条记录 · {manifest.counts.total_relationships} 条关系</p>
             </div>
@@ -133,7 +133,7 @@ export function ExportWorkspace() {
 
           <section className="export-download-card">
             <div>
-              <span>READY TO DOWNLOAD</span>
+              <span>文件已准备好</span>
               <strong>{result.file_name}</strong>
               <p>文件内容与下方 fingerprint 对应。下载不会创建服务端备份或后台任务。</p>
             </div>
