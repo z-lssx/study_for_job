@@ -5,7 +5,7 @@
 
 ## 背景与问题
 
-阶段一需要把页面/API 主动创建的长任务交给独立进程执行，并支持并发领取、失败退避和 Worker 崩溃恢复。PostgreSQL 已是唯一事实源，MVP 不希望为本地单用户场景引入 Redis、Celery、RabbitMQ 或独立 Scheduler。
+页面/API 主动创建的长任务需要交给独立进程执行，并支持并发领取、失败退避和 Worker 崩溃恢复。PostgreSQL 已是唯一事实源，本地单用户场景不需要引入 Redis、Celery、RabbitMQ 或独立 Scheduler。
 
 ## 最终选择
 
@@ -54,4 +54,4 @@ next_run_at = failure_time + delay_seconds(n)
 
 ## 后续演进条件
 
-只有在部署规模、吞吐或跨系统投递需求证明 PostgreSQL 轮询成为瓶颈时，才评估消息中间件。T005 起每个处理器需声明幂等边界、外部副作用与可重试错误分类。
+只有在部署规模、吞吐或跨系统投递需求证明 PostgreSQL 轮询成为瓶颈时，才评估消息中间件。每个处理器都必须声明幂等边界、外部副作用与可重试错误分类。

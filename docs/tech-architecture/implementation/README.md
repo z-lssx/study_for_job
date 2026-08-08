@@ -5,13 +5,12 @@
 - [AI Gateway 与调用账本](ai-gateway.md)
 - [PostgreSQL 任务队列与 Worker](job-queue-worker.md)
 - [面经原始事实与可恢复入库链路](intelligence-pipeline.md)
+- [面经原文标注与证据链](intelligence-extraction.md)
 - [面试情报规范题、出现事实与频率统计](intelligence-normalization.md)
 - [面试情报混合检索与质量状态](retrieval.md)
 - [规则优先的准备评估与任务建议](planning.md)
 - [MVP Markdown/JSON 事实关系导出](export.md)
 - [桌面工作台壳层与真实路由](frontend-workbench.md)
-- `experience-coach.md`
-- `interview-simulation.md`
 - [知识准备轨道](knowledge-track.md)
 - [算法准备轨道](algorithm-track.md)
 - [项目实践证据轨道](project-track.md)

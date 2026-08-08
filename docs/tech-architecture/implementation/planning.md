@@ -1,6 +1,6 @@
 # 规则优先的准备评估与任务建议
 
-状态：T014 已实现同步只读业务链路，T015 已实现页面主动触发入口（2026-08-06）。
+状态：已实现同步只读业务链路和页面主动触发入口。
 
 ## 解决的问题与调用契约
 
@@ -53,7 +53,7 @@
 
 结构化情报只读取规范题映射与 occurrence 聚合。只有最终选中的条目才查询展示证据，并在 SQL 中直接截取最多 240 字符的清洗纯文本片段；不会把 `raw_content` 或完整 `cleaned_content` 载入策略服务。证据保留 canonical question/occurrence/evidence span/document/submission/source URL 与字符区间。无回链证据时返回 `no_linked_evidence`，而不是生成依据。
 
-T014 后端链路不调用 AI Gateway/LLM，不实现 semantic/synonym recall、embedding、pgvector、RAG、统一评分、多轮 Agent 或导出；T015 只增加下述人工页面入口，没有改变这些后端边界。
+后端链路不调用 AI Gateway/LLM，不实现 semantic/synonym recall、embedding、pgvector、RAG、统一评分、多轮 Agent 或导出；页面入口没有改变这些后端边界。
 
 ## 页面主动触发与展示契约
 
@@ -67,4 +67,4 @@ T014 后端链路不调用 AI Gateway/LLM，不实现 semantic/synonym recall、
 
 ## 验证边界与限制
 
-按用户最高优先级规则，T014/T015 没有编写或执行测试、静态语法检查、迁移验证、API/数据库运行态验证、页面/浏览器验收或构建。T014 仅完成数据/状态、排序、事实分类、投递上限、证据读取、显式触发与非范围的逻辑检查；T015 仅完成提交路径、请求参数、API order 保留、展示文案、降级状态和无自动化的逻辑检查。运行时兼容性与真实视觉行为仍未验证，不能据此宣称 API、数据库或页面链路已运行通过。
+当前只完成数据/状态、排序、事实分类、投递上限、证据读取、显式触发、请求顺序、展示降级和无自动化边界的逻辑检查；没有执行测试、构建、迁移、API/数据库或浏览器运行态验证，不能据此宣称链路已运行通过。

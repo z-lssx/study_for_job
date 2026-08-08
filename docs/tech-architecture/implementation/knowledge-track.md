@@ -1,6 +1,6 @@
 # 知识准备轨道
 
-状态：T009 已实现最小闭环（2026-08-02）。
+状态：已实现当前 MVP 闭环。
 
 ## 解决的问题
 
@@ -9,7 +9,7 @@
 ## 数据与 API
 
 - `knowledge_cards` 保存标题、可述版本（`prompt`）、用户笔记、`mastery_status`、复习次数及下一次复习日期。状态为 `not_started | learning | familiar | mastered`。
-- `knowledge_card_evidence` 显式关联阶段二 `evidence_spans`。API 返回 evidence span、document、submission、source URL、字符区间及从 cleaned content 截取的 quote，保留来源回链。
+- `knowledge_card_evidence` 显式关联 `evidence_spans`。API 返回 evidence span、document、submission、source URL、字符区间及从 cleaned content 截取的 quote，保留来源回链。
 - `GET/POST/PATCH /api/knowledge/cards` 提供列表、创建和用户修订；`GET /api/knowledge/cards/{id}` 返回卡片及证据；`POST /api/knowledge/cards/{id}/review` 只记录一次轻量复习动作并递增 `review_count`；`POST/DELETE /api/knowledge/cards/{id}/evidence[/span_id]` 管理证据关联；列表支持 `status` 和 `due_only` 过滤。
 
 ## 边界与降级

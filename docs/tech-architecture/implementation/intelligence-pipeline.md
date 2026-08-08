@@ -16,7 +16,7 @@ URL 或正文提交
   -> HTML/文本清洗为纯文本并计算 SHA-256
   -> 锁定 submission 并再次校验快照
   -> content_hash upsert 文档、upsert 来源关联、关联 submission
-  -> T004 Worker 以 lease token 写回 job 结果
+  -> Worker 以 lease token 写回 job 结果
 ```
 
 外部副作用只有公开 robots 和文章页面的只读 GET。数据库事务不跨越网络 I/O。
@@ -27,7 +27,7 @@ URL 或正文提交
 - `interview_submissions`：用户逻辑输入、初始/当前采集方式、原始输入/响应、输入指纹、修订、当前 job、错误事实、处理时间和成功文档关联。
 - `interview_documents`：首个成功原始内容、类型、清洗正文、清洗版本、内容哈希、采集方式和时间；`content_hash` 唯一。
 - `interview_document_sources`：内容事实和来源的多对多关联；复合主键避免重复关联。
-- `jobs`/`job_attempts`：沿用 T004 的队列、尝试、租约、退避和恢复事实。
+- `jobs`/`job_attempts`：保存队列、尝试、租约、退避和恢复事实。
 
 状态由当前 job 映射为 `queued | processing | retry_wait | succeeded | failed`。submission 的原始输入先于执行持久化；失败不会删除输入，成功后不允许补正文覆盖。
 
@@ -36,7 +36,7 @@ URL 或正文提交
 - URL 身份是去除 query/fragment、统一主机/协议/路径后的规范化 URL。
 - 手动正文身份是规范化纯文本的 SHA-256；部分唯一索引只约束初始手动提交。
 - 业务内容身份是清洗正文的 SHA-256；不同来源可以关联同一文档。
-- job 身份是 submission 与修订组合，payload 还携带输入指纹；同一幂等键出现不同参数由 T004 队列拒绝。
+- job 身份是 submission 与修订组合，payload 还携带输入指纹；同一幂等键出现不同参数由任务队列拒绝。
 - handler 在外部 I/O 前校验快照；完成事务先 `SELECT ... FOR UPDATE` 锁定 submission，再次校验修订和指纹，然后才 upsert 文档。重复或迟到写回只能返回既有成功文档，不能覆盖内容或留下孤立事实。
 
 ## 公开来源与 SSRF 边界
@@ -49,7 +49,7 @@ URL 或正文提交
 
 ## 错误与恢复
 
-错误以固定 code、脱敏 message 和 retryable 持久化及返回。网络、超时、限流和临时上游失败可沿用 T004 退避，也允许终态后手动重试；来源/robots 限制、协议/地址、内容类型、体积、正文过短/无效和解析失败属于永久失败，只允许补正文。补正文递增原 submission 修订并切换为 `manual_fallback`，来源关联仍保留。
+错误以固定 code、脱敏 message 和 retryable 持久化及返回。网络、超时、限流和临时上游失败可按任务队列策略退避，也允许终态后手动重试；来源/robots 限制、协议/地址、内容类型、体积、正文过短/无效和解析失败属于永久失败，只允许补正文。补正文递增原 submission 修订并切换为 `manual_fallback`，来源关联仍保留。
 
 API 不返回完整原始输入/HTML、job payload、lease token、凭据、敏感查询参数或内部异常。页面只使用清洗纯文本预览。
 
@@ -64,5 +64,6 @@ API 不返回完整原始输入/HTML、job payload、lease token、凭据、敏�
 ## 当前限制
 
 - 只有博客园一个来源适配器；其他站点安全拒绝并提示补正文。
-- 正文清洗是确定性 HTML 到纯文本，不做 T006 的轮次或问题结构化。
+- 正文清洗是确定性 HTML 到纯文本，不承担后续轮次或问题结构化。
+- robots User-Agent、HTTPS/代理/peer、隐藏文本和超长内容 hash 仍存在已知风险，修复条件见 `docs/maintenance/known-issues.md`。
 - 已验证 1280px 桌面布局；基础响应式 CSS 存在，但当前浏览器 viewport 覆盖未生效，因此没有正式小屏截图证据。
